@@ -2,6 +2,78 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function() {
+        // 1. Intercept unhandled promise rejections in capture phase before Vite overlays or frameworks
+        window.addEventListener('unhandledrejection', function(event) {
+          var reason = event && (event.reason ? (event.reason.message || event.reason.stack || String(event.reason)) : '');
+          if (
+            typeof reason === 'string' &&
+            (reason.indexOf('WebSocket') !== -1 ||
+             reason.indexOf('closed without opened') !== -1 ||
+             reason.indexOf('failed to connect to websocket') !== -1 ||
+             reason.indexOf('vite') !== -1 && reason.indexOf('ws') !== -1)
+          ) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        }, true);
+
+        // 2. Intercept uncaught window errors in capture phase
+        window.addEventListener('error', function(event) {
+          var msg = event && (event.message || (event.error && event.error.message) || String(event));
+          if (
+            typeof msg === 'string' &&
+            (msg.indexOf('WebSocket') !== -1 ||
+             msg.indexOf('closed without opened') !== -1 ||
+             msg.indexOf('failed to connect to websocket') !== -1)
+          ) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        }, true);
+
+        // 3. Filter benign Vite HMR websocket console noise
+        var origConsoleError = console.error;
+        console.error = function() {
+          var args = Array.prototype.slice.call(arguments);
+          var joined = args.map(function(a) { return String(a || ''); }).join(' ');
+          if (
+            joined.indexOf('[vite] failed to connect to websocket') !== -1 ||
+            joined.indexOf('WebSocket closed without opened') !== -1
+          ) {
+            return; // Gracefully suppress benign sandbox HMR connection message
+          }
+          origConsoleError.apply(console, arguments);
+        };
+
+        // 4. Remove any Vite error overlay that attempts to display for websocket errors
+        if (typeof MutationObserver !== 'undefined') {
+          var observer = new MutationObserver(function(mutations) {
+            for (var i = 0; i < mutations.length; i++) {
+              var added = mutations[i].addedNodes;
+              for (var j = 0; j < added.length; j++) {
+                var node = added[j];
+                if (node && node.nodeType === 1) {
+                  var tag = (node.tagName || '').toLowerCase();
+                  if (tag === 'vite-error-overlay') {
+                    var text = node.shadowRoot ? node.shadowRoot.textContent : (node.textContent || '');
+                    if (
+                      text.indexOf('WebSocket') !== -1 ||
+                      text.indexOf('closed without opened') !== -1 ||
+                      text.indexOf('failed to connect to websocket') !== -1
+                    ) {
+                      try { node.remove(); } catch(e) {}
+                    }
+                  }
+                }
+              }
+            }
+          });
+          observer.observe(document.documentElement, { childList: true, subtree: true });
+        }
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weeds to Wealth v1.0</title>
     <meta name="description" content="Replacing synthetic NPK with toxic invasive weeds. Scaling Vrikshayurveda's Kunapajala for Mission LiFE. NCSC 2026-27 | Sub-Theme 5." />

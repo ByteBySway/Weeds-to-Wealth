@@ -29,3 +29,28 @@
     border-radius: 0;
   }
 }
+
+/* Optimized Print Layout for NCSC Report Dossier */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  
+  header, nav, footer, .print\:hidden {
+    display: none !important;
+  }
+
+  .printable-dossier {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+}

@@ -1,6 +1,7 @@
-import React from 'react';
-import { Printer, X, Download, ShieldCheck, CheckCircle2, FileText } from 'lucide-react';
+import React, { useState } from 'react';
+import { Printer, X, Download, ShieldCheck, CheckCircle2, FileText, Loader2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { exportDossierPdf } from '../utils/pdfGenerator';
 
 interface ReportPdfModalProps {
   isOpen: boolean;
@@ -16,6 +17,8 @@ export const ReportPdfModal: React.FC<ReportPdfModalProps> = ({
   spend = 4000,
 }) => {
   const { t, language } = useLanguage();
+  const [isExporting, setIsExporting] = useState<boolean>(false);
+  const [exportNotice, setExportNotice] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
@@ -26,14 +29,52 @@ export const ReportPdfModal: React.FC<ReportPdfModalProps> = ({
   const co2Prevented = (acres * 12.4).toFixed(1);
   const ureaBags = Math.round(seasonalSavings / 350);
   const foliarSprayLiters = ((acres * 4.5) * 10).toFixed(0);
+  const reportDate = new Date().toLocaleDateString('en-GB');
+
+  const handleDownloadPdf = () => {
+    setIsExporting(true);
+    setExportNotice("Generating high-resolution vector PDF...");
+
+    setTimeout(() => {
+      const success = exportDossierPdf({
+        acres,
+        spend,
+        partheniumKg,
+        cowUrineLiters,
+        jaggeryKg,
+        seasonalSavings,
+        co2Prevented,
+        ureaBags,
+        foliarSprayLiters,
+        reportDate,
+      });
+
+      setIsExporting(false);
+      if (success) {
+        setExportNotice("PDF successfully generated and downloaded!");
+        setTimeout(() => setExportNotice(null), 4000);
+      } else {
+        setExportNotice("Direct generation encountered an error; falling back to browser print.");
+        setTimeout(() => {
+          setExportNotice(null);
+          window.print();
+        }, 800);
+      }
+    }, 150);
+  };
 
   const handlePrint = () => {
-    window.print();
+    try {
+      window.print();
+    } catch (e) {
+      console.warn("window.print blocked or unavailable in iframe, initiating direct PDF download fallback:", e);
+      handleDownloadPdf();
+    }
   };
 
   return (
     <div className="fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-3 sm:p-6 overflow-y-auto backdrop-blur-xs">
-      <div className="bg-white border-2 border-zinc-950 w-full max-w-4xl max-h-[92vh] flex flex-col shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+      <div className="bg-white border-2 border-zinc-950 w-full max-w-4xl max-h-[92vh] flex flex-col shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] printable-dossier">
         
         {/* Modal Top Bar (Hidden on print) */}
         <div className="print:hidden bg-zinc-900 text-white px-5 py-3 flex items-center justify-between border-b border-zinc-800 font-mono text-xs">
@@ -45,11 +86,24 @@ export const ReportPdfModal: React.FC<ReportPdfModalProps> = ({
           </div>
           <div className="flex items-center gap-2">
             <button
+              onClick={handleDownloadPdf}
+              disabled={isExporting}
+              className="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 font-bold flex items-center gap-1.5 cursor-pointer shadow-sm transition-all active:translate-x-[1px] active:translate-y-[1px] disabled:opacity-50"
+            >
+              {isExporting ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Download className="w-3.5 h-3.5" />
+              )}
+              <span>{isExporting ? "Generating..." : "Download PDF (.pdf)"}</span>
+            </button>
+            <button
               onClick={handlePrint}
-              className="bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1.5 font-bold flex items-center gap-1.5 cursor-pointer shadow-sm transition-all active:translate-x-[1px] active:translate-y-[1px]"
+              className="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 px-3 py-1.5 font-bold flex items-center gap-1.5 cursor-pointer shadow-sm transition-all"
+              title="Print directly or use browser Save to PDF dialog"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>Print / Save as PDF</span>
+              <span className="hidden sm:inline">Print / Ctrl+P</span>
             </button>
             <button
               onClick={onClose}
@@ -59,6 +113,22 @@ export const ReportPdfModal: React.FC<ReportPdfModalProps> = ({
             </button>
           </div>
         </div>
+
+        {/* Download notification banner if active */}
+        {exportNotice && (
+          <div className="print:hidden bg-emerald-50 border-b border-emerald-300 px-5 py-2 flex items-center justify-between font-mono text-xs text-emerald-800">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>{exportNotice}</span>
+            </div>
+            <button
+              onClick={() => setExportNotice(null)}
+              className="text-emerald-700 hover:text-emerald-950 font-bold"
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
         {/* Printable Report Document Body */}
         <div className="p-6 sm:p-10 overflow-y-auto font-sans text-zinc-900 bg-white">
@@ -91,7 +161,7 @@ export const ReportPdfModal: React.FC<ReportPdfModalProps> = ({
             </div>
             <div>
               <span className="text-[10px] text-zinc-500 block uppercase">Report Date</span>
-              <span className="font-bold text-zinc-900">{new Date().toLocaleDateString('en-GB')}</span>
+              <span className="font-bold text-zinc-900">{reportDate}</span>
             </div>
             <div>
               <span className="text-[10px] text-zinc-500 block uppercase">IKS Reference</span>
@@ -175,7 +245,7 @@ export const ReportPdfModal: React.FC<ReportPdfModalProps> = ({
                 <div>
                   <span className="font-bold text-amber-800 block">Days 1–7: Acidogenesis & Hydrolysis (pH 6.8 ➔ 4.5 Nadir)</span>
                   <span className="text-zinc-600 text-[11px]">
-                    Daily 5-minute manual clockwise stirring. Lactic & acetic acid drop pH to 4.5, cleaving 99.8% of parthenin lactone allergens.
+                    Daily 5-minute manual clockwise stirring. Lactic & acetic acid drop pH to 4.5, cleaving 99.8% of parthenin lactone allergens into safe bio-chelates.
                   </span>
                 </div>
                 <span className="bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 text-[10px] font-bold shrink-0 ml-2">
@@ -242,11 +312,11 @@ export const ReportPdfModal: React.FC<ReportPdfModalProps> = ({
         </div>
 
         {/* Modal Bottom Footer (Hidden on print) */}
-        <div className="print:hidden bg-zinc-100 border-t border-zinc-300 p-4 flex justify-between items-center font-mono text-xs">
+        <div className="print:hidden bg-zinc-100 border-t border-zinc-300 p-4 flex flex-wrap justify-between items-center gap-3 font-mono text-xs">
           <span className="text-zinc-500">
-            Print layout optimized for A4 paper and PDF export.
+            PDF is generated as a vector A4 document ready for NCSC submission.
           </span>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <button
               onClick={onClose}
               className="px-4 py-2 border border-zinc-300 bg-white hover:bg-zinc-50 text-zinc-700 cursor-pointer"
@@ -255,10 +325,23 @@ export const ReportPdfModal: React.FC<ReportPdfModalProps> = ({
             </button>
             <button
               onClick={handlePrint}
-              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold flex items-center gap-2 cursor-pointer shadow-sm"
+              className="px-3.5 py-2 border border-zinc-400 bg-zinc-200 hover:bg-zinc-300 text-zinc-800 font-bold flex items-center gap-1.5 cursor-pointer shadow-xs"
+              title="Browser print fallback"
             >
-              <Printer className="w-4 h-4" />
-              <span>Print / Save as PDF</span>
+              <Printer className="w-3.5 h-3.5" />
+              <span>Print Preview</span>
+            </button>
+            <button
+              onClick={handleDownloadPdf}
+              disabled={isExporting}
+              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold flex items-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
+            >
+              {isExporting ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Download className="w-4 h-4" />
+              )}
+              <span>{isExporting ? "Generating PDF..." : "Download PDF (.pdf)"}</span>
             </button>
           </div>
         </div>

@@ -17,6 +17,8 @@ export default function App() {
   const [modalType, setModalType] = useState<'latex' | 'csv' | 'hussain' | null>(null);
   const [isPdfModalOpen, setIsPdfModalOpen] = useState<boolean>(false);
   const [isIksModalOpen, setIsIksModalOpen] = useState<boolean>(false);
+  const [farmAcres, setFarmAcres] = useState<number>(2.5);
+  const [farmSpend, setFarmSpend] = useState<number>(4000);
 
   return (
     <LanguageProvider>
@@ -48,7 +50,12 @@ export default function App() {
           {/* Tab 2: Formulation Engine (ROI Calculator & Stoichiometry Matrix) */}
           {activeTab === 'calculator' && (
             <div className="animate-fadeIn">
-              <FormulationEngine initialAcres={2.5} initialSpend={4000} />
+              <FormulationEngine
+                acres={farmAcres}
+                onAcresChange={setFarmAcres}
+                spend={farmSpend}
+                onSpendChange={setFarmSpend}
+              />
             </div>
           )}
 
@@ -90,8 +97,8 @@ export default function App() {
         <ReportPdfModal
           isOpen={isPdfModalOpen}
           onClose={() => setIsPdfModalOpen(false)}
-          acres={2.5}
-          spend={4000}
+          acres={farmAcres}
+          spend={farmSpend}
         />
       </div>
     </LanguageProvider>

@@ -6,15 +6,37 @@ import { CropYieldPredictor } from './CropYieldPredictor';
 interface FormulationEngineProps {
   initialAcres?: number;
   initialSpend?: number;
+  acres?: number;
+  onAcresChange?: (acres: number) => void;
+  spend?: number;
+  onSpendChange?: (spend: number) => void;
 }
 
 export const FormulationEngine: React.FC<FormulationEngineProps> = ({
   initialAcres = 2.5,
   initialSpend = 4000,
+  acres: controlledAcres,
+  onAcresChange,
+  spend: controlledSpend,
+  onSpendChange,
 }) => {
   const { t } = useLanguage();
-  const [acres, setAcres] = useState<number>(initialAcres);
-  const [spend, setSpend] = useState<number>(initialSpend);
+  const [internalAcres, setInternalAcres] = useState<number>(initialAcres);
+  const [internalSpend, setInternalSpend] = useState<number>(initialSpend);
+
+  const acres = controlledAcres !== undefined ? controlledAcres : internalAcres;
+  const spend = controlledSpend !== undefined ? controlledSpend : internalSpend;
+
+  const updateAcres = (val: number) => {
+    setInternalAcres(val);
+    onAcresChange?.(val);
+  };
+
+  const updateSpend = (val: number) => {
+    setInternalSpend(val);
+    onSpendChange?.(val);
+  };
+
   const [dilutionRatio, setDilutionRatio] = useState<number>(10); // 10% foliar spray standard
 
   // Mathematical outputs per Vrikshayurveda Kunapajala stoichiometry
@@ -67,7 +89,7 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
                 {[1, 2.5, 5, 10].map((preset) => (
                   <button
                     key={preset}
-                    onClick={() => setAcres(preset)}
+                    onClick={() => updateAcres(preset)}
                     className={`py-1.5 px-2 border text-center transition-all cursor-pointer ${
                       acres === preset
                         ? 'bg-emerald-700 text-white border-emerald-500 font-bold'
@@ -96,7 +118,7 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
                 max="50"
                 step="0.5"
                 value={acres}
-                onChange={(e) => setAcres(parseFloat(e.target.value))}
+                onChange={(e) => updateAcres(parseFloat(e.target.value))}
                 className="w-full h-2.5 bg-zinc-800 rounded-none appearance-none cursor-pointer accent-emerald-500 focus:outline-none"
               />
               <div className="flex justify-between text-[11px] font-mono text-zinc-500 mt-1.5">
@@ -122,7 +144,7 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
                 max="5000"
                 step="100"
                 value={spend}
-                onChange={(e) => setSpend(parseInt(e.target.value, 10))}
+                onChange={(e) => updateSpend(parseInt(e.target.value, 10))}
                 className="w-full h-2.5 bg-zinc-800 rounded-none appearance-none cursor-pointer accent-amber-500 focus:outline-none"
               />
               <div className="flex justify-between text-[11px] font-mono text-zinc-500 mt-1.5">
