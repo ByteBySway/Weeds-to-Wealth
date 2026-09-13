@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Terminal, Cpu, Info, Calculator, Sparkles, AlertCircle } from 'lucide-react';
+import { Terminal, Cpu, Info, Calculator, Sparkles, AlertCircle, Leaf } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface FormulationEngineProps {
   initialAcres?: number;
@@ -10,6 +11,7 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
   initialAcres = 2.5,
   initialSpend = 4000,
 }) => {
+  const { t } = useLanguage();
   const [acres, setAcres] = useState<number>(initialAcres);
   const [spend, setSpend] = useState<number>(initialSpend);
   const [dilutionRatio, setDilutionRatio] = useState<number>(10); // 10% foliar spray standard
@@ -31,13 +33,13 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
       <div className="mb-8">
         <div className="inline-flex items-center gap-2 border border-amber-600/40 bg-amber-50 px-3 py-1 text-xs font-mono text-amber-800 mb-3 font-semibold shadow-[1px_1px_0px_0px_rgba(217,119,6,0.3)]">
           <span className="w-2 h-2 bg-amber-600"></span>
-          BIO-RESOURCE RATIO CONVERSION ENGINE
+          {t.roiBadge}
         </div>
         <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900">
-          Vrikshayurveda Agronomic ROI & Formulation Engine
+          {t.roiTitle}
         </h2>
         <p className="text-zinc-600 text-sm sm:text-base mt-2 max-w-3xl leading-relaxed">
-          Compute stoichiometric biomass harvesting quotas, microbial carbohydrate feeds, and baseline synthetic expenditure offsets for any agrarian landholding.
+          {t.roiSubtitle}
         </p>
       </div>
 
@@ -207,11 +209,23 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
               ₹ {seasonalSavings.toLocaleString('en-IN')}
             </div>
 
-            {/* Environmental Impact Badges */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-4 border-t border-zinc-800/80 font-mono text-xs">
+            {/* Environmental Impact Badges including Dynamic Carbon Offset Counter */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mt-4 pt-4 border-t border-zinc-800/80 font-mono text-xs">
+              {/* Dynamic Carbon Offset Counter: mandated exact label */}
+              <div className="p-2.5 bg-zinc-950/90 border border-emerald-800/50 text-zinc-300">
+                <span className="text-emerald-400 block text-[10px] uppercase font-bold flex items-center gap-1">
+                  <Leaf className="w-3 h-3 text-emerald-400" />
+                  CARBON OFFSET COUNTER
+                </span>
+                <span className="text-emerald-400 font-bold text-sm block mt-1">
+                  CO2 Prevented: {(acres * 12.4).toFixed(1)} kg
+                </span>
+                <span className="text-zinc-500 block text-[10px] mt-0.5">Displaced Haber-Bosch emissions</span>
+              </div>
+
               <div className="p-2.5 bg-zinc-950/90 border border-zinc-800 text-zinc-400">
                 <span className="text-zinc-500 block text-[10px] uppercase">Synthetic Offset</span>
-                <span className="text-emerald-400 font-bold text-sm">
+                <span className="text-zinc-200 font-bold text-sm block mt-1">
                   {ureaBagsEliminated} Bags
                 </span>
                 <span className="text-zinc-500 block text-[10px] mt-0.5">Urea/DAP eradicated</span>
@@ -219,7 +233,7 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
 
               <div className="p-2.5 bg-zinc-950/90 border border-zinc-800 text-zinc-400">
                 <span className="text-zinc-500 block text-[10px] uppercase">Runoff Protection</span>
-                <span className="text-amber-400 font-bold text-sm">
+                <span className="text-amber-400 font-bold text-sm block mt-1">
                   {nitrogenRunoffPreventedKg} kg N
                 </span>
                 <span className="text-zinc-500 block text-[10px] mt-0.5">Watershed pollution spared</span>
@@ -232,3 +246,4 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
     </section>
   );
 };
+

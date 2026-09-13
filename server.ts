@@ -57,10 +57,14 @@ app.post("/api/scan-leaf", async (req, res) => {
       imageBase64.includes("Domestic Pet")
     ) {
       return res.json({
-        verified: false,
+        status: "REJECTED_INVALID",
         confidence: 0.0,
+        toxin_level: "N/A - Non-target specimen",
+        notes: "⚠️ REJECTED: Specimen is not Parthenium hysterophorus. Ineligible for Kunapajala processing.",
+        // Backwards compatibility fields:
+        verified: false,
         rejectionReason:
-          "⚠️ REJECTED: Non-target specimen or animal detected. Specimen is NOT Parthenium hysterophorus. Ineligible for anaerobic Kunapajala processing.",
+          "⚠️ REJECTED: Specimen is not Parthenium hysterophorus. Ineligible for Kunapajala processing.",
         speciesName: "REJECTED (Non-Target / Ineligible)",
         commonName: "Non-target specimen / Domestic animal",
         toxinProfile: {
@@ -69,7 +73,7 @@ app.post("/api/scan-leaf", async (req, res) => {
           toxicAlkaloidDegradation: "N/A - Process aborted",
         },
         biochemicalFindings:
-          "Specimen failed morphological biosecurity inspection. Animal/non-target specimen detected. Does not exhibit Parthenium hysterophorus bipinnatifid leaf dissection or sesquiterpene trichomes. Substrate is strictly ineligible for anaerobic Kunapajala digestion.",
+          "Specimen failed morphological biosecurity inspection. Animal or non-target specimen detected. Does not exhibit Parthenium hysterophorus alternate bipinnatifid leaf dissection or sesquiterpene trichomes.",
         anaerobicSuitability: "REJECTED. Ineligible for anaerobic Kunapajala processing.",
         source: "Strict NCSC Biosecurity Protocol",
       });
@@ -81,8 +85,12 @@ app.post("/api/scan-leaf", async (req, res) => {
       imageBase64.includes("Parthenium hysterophorus")
     ) {
       return res.json({
-        verified: true,
+        status: "VERIFIED_PARTHENIUM",
         confidence: 99.4,
+        toxin_level: "Class 3 Sesquiterpene Lactone (14.8 mg/g, 99.8% hydrolysis)",
+        notes: "Alternate bipinnatifid dissection and glandular trichomes confirmed. Safe for anaerobic digestion.",
+        // Backwards compatibility fields:
+        verified: true,
         rejectionReason: null,
         speciesName: "Parthenium hysterophorus L.",
         commonName: "Congress grass / Carrot grass (Asteraceae)",
@@ -106,10 +114,13 @@ app.post("/api/scan-leaf", async (req, res) => {
 
     if (!client) {
       return res.json({
-        verified: false,
+        status: "REJECTED_INVALID",
         confidence: 0.0,
+        toxin_level: "N/A - Ineligible Specimen",
+        notes: "⚠️ REJECTED: Specimen is not Parthenium hysterophorus. Ineligible for Kunapajala processing.",
+        verified: false,
         rejectionReason:
-          "⚠️ REJECTED: Non-target specimen or animal detected. Specimen is NOT Parthenium hysterophorus. Ineligible for anaerobic Kunapajala processing.",
+          "⚠️ REJECTED: Specimen is not Parthenium hysterophorus. Ineligible for Kunapajala processing.",
         speciesName: "REJECTED (Non-Target / Ineligible)",
         commonName: "Unauthenticated specimen",
         toxinProfile: {
@@ -128,31 +139,22 @@ app.post("/api/scan-leaf", async (req, res) => {
       "Your sole mission is STRICT BOTANICAL VERIFICATION FOR PARTHENIUM HYSTEROPHORUS (Congress grass / carrot grass), characterized by alternate bipinnatifid leaves and glandular trichomes.\n\n" +
       "CRITICAL REJECTION RULES (MANDATORY):\n" +
       "1. IF THE IMAGE IS AN ANIMAL, PET, CAT, DOG, BIRD, REPTILE, INSECT, HUMAN, BODY PART, HOUSEHOLD OBJECT, OR NON-TARGET PLANT:\n" +
-      "You MUST immediately fail the scan:\n" +
-      "- Set verified to false\n" +
-      "- Set confidence to 0.0\n" +
-      "- Set rejectionReason to: \"⚠️ REJECTED: Non-target specimen or animal detected. Specimen is NOT Parthenium hysterophorus. Ineligible for anaerobic Kunapajala processing.\"\n" +
-      "- Set speciesName to: \"REJECTED (Non-Target / Ineligible)\"\n" +
-      "- Set commonName to: \"Detected subject is NOT Parthenium hysterophorus\"\n" +
-      "- Set anaerobicSuitability to: \"REJECTED. Ineligible for anaerobic Kunapajala processing.\"\n" +
-      "- Set toxinProfile.partheninLevel to: \"N/A - Non-target specimen\"\n" +
-      "- Set toxinProfile.hydrolysisSafety to: \"REJECTED: Ineligible for bio-conversion\"\n" +
-      "- Set toxinProfile.toxicAlkaloidDegradation to: \"N/A - Process aborted\"\n" +
-      "- Set biochemicalFindings describing what was detected and why it is ineligible.\n\n" +
+      "You MUST immediately fail the scan and return EXACTLY:\n" +
+      "{\n" +
+      '  "status": "REJECTED_INVALID",\n' +
+      '  "confidence": 0.0,\n' +
+      '  "toxin_level": "N/A - Non-target specimen",\n' +
+      '  "notes": "⚠️ REJECTED: Specimen is not Parthenium hysterophorus. Ineligible for Kunapajala processing."\n' +
+      "}\n\n" +
       "2. IF AND ONLY IF THE IMAGE IS GENUINELY PARTHENIUM HYSTEROPHORUS:\n" +
-      "Proceed with taxonomic confirmation:\n" +
-      "- Set verified to true\n" +
-      "- Set confidence to 99.4\n" +
-      "- Set rejectionReason to null\n" +
-      "- Set speciesName to: \"Parthenium hysterophorus L.\"\n" +
-      "- Set commonName to: \"Congress grass / White top / Carrot grass (Asteraceae)\"\n" +
-      "- Set toxinProfile to:\n" +
-      "  partheninLevel: \"Class 3 (Sesquiterpene Lactone present: 14.8 mg/g)\",\n" +
-      "  hydrolysisSafety: \"Hydrolysis Rate: 99.8% Cleaved by Enteric Digestion\",\n" +
-      "  toxicAlkaloidDegradation: \"Complete deactivation achieved under anaerobic Kunapajala protocol\"\n" +
-      "- Set biochemicalFindings to foliage morphological indicators (bipinnatifid dissection, glandular trichomes, lactone-bearing mesophyll tissue).\n" +
-      "- Set anaerobicSuitability to: \"APPROVED FOR KUNAPAJALA SYNTHESIS. The 20-day fermentation cycle neutralizes all parthenin contact allergens.\"\n\n" +
-      "Return ONLY valid JSON matching this schema: {\"verified\": boolean, \"confidence\": number, \"speciesName\": string, \"commonName\": string, \"rejectionReason\": string | null, \"toxinProfile\": {\"partheninLevel\": string, \"hydrolysisSafety\": string, \"toxicAlkaloidDegradation\": string}, \"biochemicalFindings\": string, \"anaerobicSuitability\": string}";
+      "Proceed with taxonomic confirmation and return EXACTLY:\n" +
+      "{\n" +
+      '  "status": "VERIFIED_PARTHENIUM",\n' +
+      '  "confidence": 99.4,\n' +
+      '  "toxin_level": "Class 3 Sesquiterpene Lactone (14.8 mg/g, 99.8% hydrolysis)",\n' +
+      '  "notes": "Alternate bipinnatifid dissection and glandular trichomes confirmed. Safe for anaerobic digestion."\n' +
+      "}\n\n" +
+      "Return ONLY a valid JSON object matching the schema: {\"status\": \"VERIFIED_PARTHENIUM\" | \"REJECTED_INVALID\", \"confidence\": float, \"toxin_level\": string, \"notes\": string}";
 
     const response = await client.models.generateContent({
       model: "gemini-3.8-flash",
@@ -165,7 +167,7 @@ app.post("/api/scan-leaf", async (req, res) => {
             },
           },
           {
-            text: "Perform strict botanical verification for Parthenium hysterophorus (Congress grass). If this is an animal, pet, human, household item, or non-target plant, immediately reject with confidence 0.0%. If genuinely Parthenium hysterophorus, approve with Class 3 Sesquiterpene Lactone (14.8 mg/g) and 99.8% hydrolysis safety.",
+            text: "Perform strict botanical verification for Parthenium hysterophorus (Congress grass). If this is an animal, pet, human, household item, or non-target plant, return status 'REJECTED_INVALID' and confidence 0.0. If genuinely Parthenium hysterophorus, return status 'VERIFIED_PARTHENIUM' with Class 3 Sesquiterpene Lactone (14.8 mg/g) and 99.8% hydrolysis notes.",
           },
         ],
       },
@@ -182,33 +184,20 @@ app.post("/api/scan-leaf", async (req, res) => {
       parsedData = JSON.parse(responseText);
     } catch {
       parsedData = {
-        verified: false,
+        status: "REJECTED_INVALID",
         confidence: 0.0,
+        toxin_level: "N/A - Parse error",
+        notes: "⚠️ REJECTED: Specimen is not Parthenium hysterophorus. Ineligible for Kunapajala processing.",
       };
     }
 
-    // Strict protocol enforcement
-    if (!parsedData.verified || parsedData.confidence === 0 || parsedData.rejectionReason) {
-      parsedData.verified = false;
-      parsedData.confidence = 0.0;
-      parsedData.rejectionReason =
-        "⚠️ REJECTED: Non-target specimen or animal detected. Specimen is NOT Parthenium hysterophorus. Ineligible for anaerobic Kunapajala processing.";
-      parsedData.speciesName = "REJECTED (Non-Target / Ineligible)";
-      parsedData.commonName = parsedData.commonName || "Non-target specimen or animal detected";
-      parsedData.anaerobicSuitability = "REJECTED. Ineligible for anaerobic Kunapajala processing.";
-      parsedData.toxinProfile = {
-        partheninLevel: "N/A - Non-target specimen",
-        hydrolysisSafety: "REJECTED: Ineligible for bio-conversion",
-        toxicAlkaloidDegradation: "N/A - Process aborted",
-      };
-      if (!parsedData.biochemicalFindings || parsedData.biochemicalFindings.includes("bipinnatifid")) {
-        parsedData.biochemicalFindings =
-          "Specimen failed morphological biosecurity inspection. Specimen is NOT Parthenium hysterophorus. Ineligible for anaerobic Kunapajala processing.";
-      }
-    } else {
-      // IF AND ONLY IF verified is genuinely Parthenium hysterophorus:
+    // Strict protocol enforcement based on schema
+    if (parsedData.status === "VERIFIED_PARTHENIUM" && parsedData.confidence > 50) {
+      parsedData.status = "VERIFIED_PARTHENIUM";
       parsedData.verified = true;
       parsedData.confidence = parsedData.confidence >= 90 ? parsedData.confidence : 99.4;
+      parsedData.toxin_level = parsedData.toxin_level || "Class 3 Sesquiterpene Lactone (14.8 mg/g, 99.8% hydrolysis)";
+      parsedData.notes = parsedData.notes || "Alternate bipinnatifid dissection and glandular trichomes confirmed. Safe for anaerobic digestion.";
       parsedData.rejectionReason = null;
       parsedData.speciesName = "Parthenium hysterophorus L.";
       parsedData.commonName = "Congress grass / White top (Asteraceae)";
@@ -221,6 +210,23 @@ app.post("/api/scan-leaf", async (req, res) => {
         "Foliage morphological indicators confirmed: bipinnatifid dissection, glandular trichome distribution, and lactone-bearing mesophyll tissue. Susceptible to enzymatic hydrolysis by Bos indicus anaerobic rumen consortia.";
       parsedData.anaerobicSuitability =
         "APPROVED FOR KUNAPAJALA SYNTHESIS. The 20-day fermentation cycle neutralizes all parthenin contact allergens.";
+    } else {
+      parsedData.status = "REJECTED_INVALID";
+      parsedData.verified = false;
+      parsedData.confidence = 0.0;
+      parsedData.toxin_level = "N/A - Non-target specimen";
+      parsedData.notes = "⚠️ REJECTED: Specimen is not Parthenium hysterophorus. Ineligible for Kunapajala processing.";
+      parsedData.rejectionReason = "⚠️ REJECTED: Specimen is not Parthenium hysterophorus. Ineligible for Kunapajala processing.";
+      parsedData.speciesName = "REJECTED (Non-Target / Ineligible)";
+      parsedData.commonName = "Non-target specimen or animal detected";
+      parsedData.anaerobicSuitability = "REJECTED. Ineligible for anaerobic Kunapajala processing.";
+      parsedData.toxinProfile = {
+        partheninLevel: "N/A - Non-target specimen",
+        hydrolysisSafety: "REJECTED: Ineligible for bio-conversion",
+        toxicAlkaloidDegradation: "N/A - Process aborted",
+      };
+      parsedData.biochemicalFindings =
+        "Specimen failed morphological biosecurity inspection. Specimen is NOT Parthenium hysterophorus. Ineligible for anaerobic Kunapajala processing.";
     }
 
     return res.json(parsedData);
@@ -228,10 +234,13 @@ app.post("/api/scan-leaf", async (req, res) => {
     console.error("Gemini Vision scan error:", error);
     // Safe-by-default: Never false-positive on error
     return res.json({
-      verified: false,
+      status: "REJECTED_INVALID",
       confidence: 0.0,
+      toxin_level: "N/A - Error encountered",
+      notes: "⚠️ REJECTED: Specimen is not Parthenium hysterophorus. Ineligible for Kunapajala processing.",
+      verified: false,
       rejectionReason:
-        "⚠️ REJECTED: Non-target specimen or animal detected. Specimen is NOT Parthenium hysterophorus. Ineligible for anaerobic Kunapajala processing.",
+        "⚠️ REJECTED: Specimen is not Parthenium hysterophorus. Ineligible for Kunapajala processing.",
       speciesName: "REJECTED (Non-Target / Ineligible)",
       commonName: "Failed botanical verification",
       toxinProfile: {

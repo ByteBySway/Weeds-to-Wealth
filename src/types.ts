@@ -1,5 +1,9 @@
 export type ActiveTab = 'dashboard' | 'calculator' | 'protocol' | 'map';
 
+export type LanguageCode = 'EN' | 'HI' | 'OD';
+
+export type ScanStatus = 'VERIFIED_PARTHENIUM' | 'REJECTED_INVALID';
+
 export interface LabTrialCohort {
   name: string;
   isPrimary?: boolean;
@@ -18,21 +22,25 @@ export interface FormulationCalculations {
   savings: number;
   ureaBagsEliminated: number;
   syntheticRunoffAvoidedKg: number;
+  co2PreventedKg: number;
 }
 
 export interface GeminiScanResult {
-  verified: boolean;
-  speciesName: string;
-  commonName: string;
+  status: ScanStatus;
   confidence: number;
+  toxin_level: string;
+  notes: string;
+  verified?: boolean;
+  speciesName?: string;
+  commonName?: string;
   rejectionReason?: string;
-  toxinProfile: {
+  toxinProfile?: {
     partheninLevel: string;
     hydrolysisSafety: string;
     toxicAlkaloidDegradation: string;
   };
-  biochemicalFindings: string;
-  anaerobicSuitability: string;
+  biochemicalFindings?: string;
+  anaerobicSuitability?: string;
   rawSummary?: string;
   source?: string;
 }
@@ -42,7 +50,7 @@ export interface InfestationPin {
   lat: string;
   lng: string;
   label: string;
-  severity: 'Critical' | 'Severe' | 'Moderate' | 'Harvested';
+  severity: 'Critical' | 'Severe' | 'Moderate' | 'Low' | 'Harvested';
   biomassTons: number;
   reportedDate: string;
   harvestVolunteerGroup: string;
@@ -59,4 +67,13 @@ export interface FermentationPhase {
   targetPh: string;
   targetTemp: string;
   microbialAgents: string[];
+}
+
+export interface DailyStirringLog {
+  day: number;
+  targetPh: number;
+  actualPh?: number;
+  stirred: boolean;
+  phase: string;
+  instructions: string;
 }
