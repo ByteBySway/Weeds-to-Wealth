@@ -316,7 +316,10 @@ app.post("/api/scan-leaf", async (req, res) => {
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        hmr: false, // Explicitly disable Vite HMR WebSocket to eliminate "WebSocket closed without opened"
+      },
       appType: "spa",
     });
     app.use(vite.middlewares);

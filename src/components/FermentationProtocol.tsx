@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, type Variants } from 'motion/react';
 import { BatchFermentationLog } from './BatchFermentationLog';
+import { PartheninDetoxVisualizer } from './PartheninDetoxVisualizer';
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -207,7 +208,10 @@ export const FermentationProtocol: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Sub-Panel: Batch Fermentation Log with Live pH Curve Tracking (6.8 -> 4.5) and Daily Manual Stirring Checklists */}
+      {/* MODULE 3: PARTHENIN DETOX KINETICS VISUALIZER */}
+      <PartheninDetoxVisualizer />
+
+      {/* Sub-Panel: Batch Fermentation Log with Live Recharts pH Curve Tracking and Daily Manual Stirring Checklists */}
       <BatchFermentationLog />
     </section>
   );

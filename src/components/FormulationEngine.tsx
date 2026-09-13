@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Terminal, Cpu, Info, Calculator, Sparkles, AlertCircle, Leaf } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { CropYieldPredictor } from './CropYieldPredictor';
 
 interface FormulationEngineProps {
   initialAcres?: number;
@@ -243,6 +244,9 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
 
         </div>
       </div>
+
+      {/* MODULE 4: CROP-SPECIFIC YIELD UPLIFT & SOC PREDICTOR */}
+      <CropYieldPredictor currentAcres={acres} />
     </section>
   );
 };

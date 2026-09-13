@@ -1,14 +1,16 @@
 import React from 'react';
-import { Coins, Sprout, CheckCircle2, FlaskConical, ArrowRight } from 'lucide-react';
+import { Coins, Sprout, CheckCircle2, FlaskConical, ArrowRight, BookOpen } from 'lucide-react';
 import { LAB_TRIAL_COHORTS } from '../data/constants';
 import { ActiveTab } from '../types';
+import { NutrientParityMatrix } from './NutrientParityMatrix';
 
 interface HeroSectionProps {
   onNavigate: (tab: ActiveTab) => void;
   onOpenReport: (type: 'latex' | 'csv' | 'hussain') => void;
+  onOpenIksMatrix?: () => void;
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, onOpenReport }) => {
+export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, onOpenReport, onOpenIksMatrix }) => {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
       {/* Top Protocol Tag */}
@@ -167,6 +169,33 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, onOpenRepo
           </table>
         </div>
       </div>
+
+      {/* MODULE 2: N-P-K-S NUTRIENT PARITY MATRIX */}
+      <NutrientParityMatrix />
+
+      {/* Dedicated IKS & Academic Citations Matrix Callout Banner */}
+      {onOpenIksMatrix && (
+        <div className="my-10 bg-amber-50 border-2 border-amber-500 p-5 sm:p-6 shadow-[4px_4px_0px_0px_rgba(217,119,6,1)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-mono">
+          <div>
+            <span className="text-xs uppercase tracking-wider font-bold text-amber-900 flex items-center gap-1.5 mb-1">
+              <BookOpen className="w-4 h-4 text-amber-700" />
+              ANCIENT CODEX TO MODERN CHROMATOGRAPHY
+            </span>
+            <h4 className="text-base sm:text-lg font-bold text-zinc-900 font-sans">
+              Surapala Vrikshayurveda & HPLC Molecular Telemetry Dossier
+            </h4>
+            <p className="text-xs text-zinc-600 font-sans mt-0.5 max-w-xl">
+              Cross-examine 1,000-year-old Sanskrit fermentation slokas against modern peer-reviewed HPLC datasets (Hussain et al., 2017).
+            </p>
+          </div>
+          <button
+            onClick={onOpenIksMatrix}
+            className="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shrink-0 cursor-pointer shadow-xs active:translate-x-[1px] active:translate-y-[1px] transition-all"
+          >
+            📜 View IKS & Academic Citations Matrix
+          </button>
+        </div>
+      )}
 
       {/* Action Quick Launchers */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">

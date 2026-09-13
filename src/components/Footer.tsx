@@ -3,9 +3,10 @@ import { FileText, BarChart3, Microscope } from 'lucide-react';
 
 interface FooterProps {
   onOpenReport: (type: 'latex' | 'csv' | 'hussain') => void;
+  onOpenIksMatrix?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenReport }) => {
+export const Footer: React.FC<FooterProps> = ({ onOpenReport, onOpenIksMatrix }) => {
   return (
     <footer className="w-full border-t border-zinc-300 bg-white">
       {/* 3 Sharp Outline Buttons Section */}
@@ -15,6 +16,15 @@ export const Footer: React.FC<FooterProps> = ({ onOpenReport }) => {
         </h3>
 
         <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+          {onOpenIksMatrix && (
+            <button
+              onClick={onOpenIksMatrix}
+              className="border-2 border-amber-600 bg-amber-50 px-4 py-2.5 hover:bg-amber-100 flex items-center gap-2 text-xs sm:text-sm font-bold text-amber-950 shadow-[3px_3px_0px_0px_rgba(217,119,6,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all cursor-pointer font-mono"
+            >
+              <span>📜 View IKS & Academic Citations Matrix</span>
+            </button>
+          )}
+
           <button
             onClick={() => onOpenReport('latex')}
             className="border border-zinc-400 bg-white px-4 py-2.5 hover:bg-zinc-100 flex items-center gap-2 text-xs sm:text-sm font-medium text-zinc-800 shadow-[2px_2px_0px_0px_rgba(161,161,170,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all cursor-pointer"

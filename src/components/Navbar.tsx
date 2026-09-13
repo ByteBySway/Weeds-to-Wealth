@@ -7,12 +7,14 @@ interface NavbarProps {
   activeTab: ActiveTab;
   setActiveTab: (tab: ActiveTab) => void;
   onOpenPdfReport: () => void;
+  onOpenIksMatrix?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   setActiveTab,
   onOpenPdfReport,
+  onOpenIksMatrix,
 }) => {
   const { language, setLanguage, t } = useLanguage();
 
@@ -77,6 +79,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           ))}
         </div>
+
+        {/* View IKS & Academic Citations Matrix Button */}
+        {onOpenIksMatrix && (
+          <button
+            onClick={onOpenIksMatrix}
+            className="px-2.5 sm:px-3 py-1.5 text-xs font-mono font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-400 flex items-center gap-1.5 cursor-pointer shadow-[2px_2px_0px_0px_rgba(217,119,6,0.5)] active:translate-x-[1px] active:translate-y-[1px] transition-all"
+            title="View Surapala Vrikshayurveda & HPLC Peer-Reviewed Academic Citations"
+          >
+            <span>📜</span>
+            <span className="hidden xl:inline">IKS & Citations Matrix</span>
+            <span className="xl:hidden">IKS Matrix</span>
+          </button>
+        )}
 
         {/* Export PDF Report Button */}
         <button

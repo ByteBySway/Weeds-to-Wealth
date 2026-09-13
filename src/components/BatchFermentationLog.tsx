@@ -1,5 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, CheckSquare, Square, RotateCcw, AlertTriangle, CheckCircle2, ChevronRight, Info, Filter } from 'lucide-react';
+import {
+  Activity,
+  CheckSquare,
+  Square,
+  RotateCcw,
+  AlertTriangle,
+  CheckCircle2,
+  ChevronRight,
+  Info,
+  Filter,
+  TrendingDown,
+  Sparkles,
+} from 'lucide-react';
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ReferenceLine,
+} from 'recharts';
 import { useLanguage } from '../context/LanguageContext';
 
 interface DayLogData {
@@ -57,9 +80,10 @@ export const BatchFermentationLog: React.FC = () => {
     }
   });
 
-  const [selectedDay, setSelectedDay] = useState<number>(7);
-  const [inputPh, setInputPh] = useState<string>('4.5');
+  const [selectedDay, setSelectedDay] = useState<number>(3);
+  const [inputPh, setInputPh] = useState<string>('5.8');
   const [filterPhase, setFilterPhase] = useState<'all' | 'phase1' | 'phase2' | 'phase3'>('all');
+  const [showTheoreticalCurve, setShowTheoreticalCurve] = useState<boolean>(true);
 
   useEffect(() => {
     localStorage.setItem('ncsc_fermentation_checklist', JSON.stringify(completedDays));
@@ -94,7 +118,7 @@ export const BatchFermentationLog: React.FC = () => {
     }
   };
 
-  const selectedDayData = PROTOCOL_DAYS_DATA.find((d) => d.day === selectedDay) || PROTOCOL_DAYS_DATA[6];
+  const selectedDayData = PROTOCOL_DAYS_DATA.find((d) => d.day === selectedDay) || PROTOCOL_DAYS_DATA[0];
   const completionPercentage = Math.round((completedDays.length / 20) * 100);
 
   // Filtered days for the checklist
@@ -105,22 +129,86 @@ export const BatchFermentationLog: React.FC = () => {
     return true;
   });
 
-  // SVG dimensions for pH curve
-  const svgWidth = 640;
-  const svgHeight = 220;
-  const paddingX = 40;
-  const paddingY = 30;
+  // Dynamic Recharts dataset: updates dynamically based on recorded manual stirring checks and logged field pH
+  const chartData = PROTOCOL_DAYS_DATA.map((d) => {
+    const isStirred = completedDays.includes(d.day);
+    const userLogged = loggedPhValues[d.day];
 
-  // Scale functions: X (Day 1-20), Y (pH 4.0 to 7.5)
-  const minPh = 4.0;
-  const maxPh = 7.5;
-  const getX = (day: number) => paddingX + ((day - 1) / 19) * (svgWidth - 2 * paddingX);
-  const getY = (ph: number) =>
-    paddingY + ((maxPh - ph) / (maxPh - minPh)) * (svgHeight - 2 * paddingY);
+    // If manual stirring check has been recorded for this day, plot the monitored batch pH
+    const recordedPh = isStirred
+      ? userLogged !== undefined
+        ? userLogged
+        : d.targetPh
+      : null;
 
-  // Generate target curve path
-  const curvePoints = PROTOCOL_DAYS_DATA.map((d) => `${getX(d.day)},${getY(d.targetPh)}`);
-  const curveD = `M ${curvePoints.join(' L ')}`;
+    return {
+      day: d.day,
+      name: `D${d.day}`,
+      targetPh: d.targetPh,
+      recordedPh: recordedPh,
+      isStirred,
+      isNadir: d.targetPh === 4.5,
+      hasCustomLog: userLogged !== undefined,
+      phase: d.phase,
+      stirringTask: d.stirringTask,
+      notes: d.notes,
+    };
+  });
+
+  // Highest recorded day with stirring completed
+  const maxCompletedDay = completedDays.length > 0 ? Math.max(...completedDays) : 0;
+  const currentBatchPh =
+    maxCompletedDay > 0
+      ? (loggedPhValues[maxCompletedDay] ?? PROTOCOL_DAYS_DATA[maxCompletedDay - 1].targetPh)
+      : 6.8;
+
+  // Custom Tooltip for scientific brutalist aesthetic
+  const CustomChartTooltip = ({ active, payload }: any) => {
+    if (!active || !payload || !payload.length) return null;
+    const data = payload[0].payload;
+
+    return (
+      <div className="bg-zinc-900 border-2 border-zinc-700 p-3 font-mono text-xs shadow-2xl text-zinc-100 max-w-xs z-50">
+        <div className="flex items-center justify-between border-b border-zinc-800 pb-1.5 mb-1.5 gap-2">
+          <span className="font-bold text-white text-[11px]">
+            Day {data.day}: {data.name}
+          </span>
+          <span
+            className={`text-[10px] px-1.5 py-0.2 border ${
+              data.isStirred
+                ? 'bg-emerald-950 text-emerald-400 border-emerald-700 font-bold'
+                : 'bg-amber-950 text-amber-400 border-amber-800'
+            }`}
+          >
+            {data.isStirred ? '✓ STIRRED' : 'PENDING STIR'}
+          </span>
+        </div>
+
+        <div className="space-y-1 text-[11px]">
+          <div className="flex justify-between items-center">
+            <span className="text-zinc-400">Target Benchmark:</span>
+            <span className="text-emerald-400 font-bold font-mono">{data.targetPh.toFixed(1)} pH</span>
+          </div>
+
+          <div className="flex justify-between items-center">
+            <span className="text-zinc-400">Recorded Batch pH:</span>
+            {data.recordedPh !== null ? (
+              <span className="text-sky-400 font-bold font-mono">
+                {data.recordedPh.toFixed(2)} pH {data.hasCustomLog && '(Custom Log)'}
+              </span>
+            ) : (
+              <span className="text-zinc-500 italic">Pending Manual Check</span>
+            )}
+          </div>
+
+          <div className="pt-1.5 border-t border-zinc-800 text-[10px] text-zinc-300">
+            <p className="font-semibold text-zinc-200">{data.phase}</p>
+            <p className="text-zinc-400 truncate mt-0.5">{data.stirringTask}</p>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="bg-white border border-zinc-300 p-6 sm:p-8 mt-12 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
@@ -160,175 +248,201 @@ export const BatchFermentationLog: React.FC = () => {
         </div>
       </div>
 
-      {/* SECTION 1: LIVE pH CURVE VISUALIZATION (6.8 -> 4.5 -> 7.1) */}
+      {/* SECTION 1: DYNAMIC RECHARTS pH CURVE TRACKING */}
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="font-mono text-xs font-bold uppercase tracking-wider text-zinc-800 bg-zinc-100 px-2 py-1 border border-zinc-300">
-              KINETIC TRAJECTORY: ACIDOGENESIS TO BIO-STABILIZATION
+              RECHARTS BIO-KINETIC pH CURVE
             </span>
             <span className="text-xs font-mono text-amber-700 font-bold">
               [ 6.8 ➔ 4.5 Nadir ➔ 7.1 ]
             </span>
           </div>
-          <span className="text-[11px] font-mono text-zinc-500">
-            Click any day marker to inspect or log custom field pH
-          </span>
+
+          {/* Quick Metrics & Toggle */}
+          <div className="flex items-center gap-3 font-mono text-xs">
+            <span className="text-zinc-600 bg-zinc-100 border border-zinc-300 px-2 py-0.5">
+              Live Monitored pH: <strong className="text-emerald-700 font-bold">{currentBatchPh.toFixed(2)}</strong>
+            </span>
+            <button
+              onClick={() => setShowTheoreticalCurve(!showTheoreticalCurve)}
+              className={`px-2 py-0.5 border text-[11px] cursor-pointer ${
+                showTheoreticalCurve
+                  ? 'bg-zinc-900 text-white border-zinc-900'
+                  : 'bg-white text-zinc-600 border-zinc-300'
+              }`}
+            >
+              {showTheoreticalCurve ? 'Hide Benchmark' : 'Show Benchmark'}
+            </button>
+          </div>
         </div>
 
-        {/* Chart Canvas */}
-        <div className="bg-zinc-950 border border-zinc-800 p-4 overflow-x-auto">
-          <div className="min-w-[620px]">
-            <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full h-auto select-none">
-              {/* Grid Lines */}
-              {[4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0].map((gridPh) => {
-                const y = getY(gridPh);
-                return (
-                  <g key={gridPh}>
-                    <line
-                      x1={paddingX}
-                      y1={y}
-                      x2={svgWidth - paddingX}
-                      y2={y}
-                      stroke={gridPh === 4.5 ? '#b45309' : '#27272a'}
-                      strokeDasharray={gridPh === 4.5 ? '4,3' : undefined}
-                      strokeWidth={gridPh === 4.5 ? '1.5' : '1'}
-                    />
-                    <text
-                      x={paddingX - 8}
-                      y={y + 3}
-                      fill={gridPh === 4.5 ? '#f59e0b' : '#71717a'}
-                      fontSize="10"
-                      fontFamily="monospace"
-                      textAnchor="end"
-                    >
-                      {gridPh.toFixed(1)}
-                    </text>
-                  </g>
-                );
-              })}
-
-              {/* Critical 4.5 Cleavage Nadir Band */}
-              <rect
-                x={getX(6.5)}
-                y={getY(4.7)}
-                width={getX(7.5) - getX(6.5)}
-                height={getY(4.3) - getY(4.7)}
-                fill="#d97706"
-                fillOpacity="0.15"
-              />
-              <text
-                x={getX(7)}
-                y={getY(4.5) + 16}
-                fill="#fbbf24"
-                fontSize="9"
-                fontFamily="monospace"
-                textAnchor="middle"
-                fontWeight="bold"
+        {/* Dynamic Recharts Chart Area */}
+        <div className="bg-zinc-950 border border-zinc-800 p-4 sm:p-5 shadow-inner">
+          <div className="h-72 sm:h-80 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={chartData}
+                margin={{ top: 15, right: 20, left: -10, bottom: 5 }}
+                onClick={(e: any) => {
+                  if (e && e.activePayload && e.activePayload.length) {
+                    const day = e.activePayload[0].payload.day;
+                    setSelectedDay(day);
+                    const logged = loggedPhValues[day];
+                    setInputPh(logged !== undefined ? logged.toString() : e.activePayload[0].payload.targetPh.toString());
+                  }
+                }}
               >
-                ★ NADIR: 4.5 pH (Lactone Cleavage)
-              </text>
+                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
 
-              {/* Phases Shading at top */}
-              <text x={getX(4)} y={paddingY - 12} fill="#fb923c" fontSize="9" fontFamily="monospace" textAnchor="middle">
-                Days 1-7: Acidogenesis (6.8 ➔ 4.5)
-              </text>
-              <text x={getX(11)} y={paddingY - 12} fill="#60a5fa" fontSize="9" fontFamily="monospace" textAnchor="middle">
-                Days 8-14: Proteolysis (4.5 ➔ 5.8)
-              </text>
-              <text x={getX(17.5)} y={paddingY - 12} fill="#34d399" fontSize="9" fontFamily="monospace" textAnchor="middle">
-                Days 15-20: Stabilization (5.8 ➔ 7.1)
-              </text>
+                <XAxis
+                  dataKey="name"
+                  stroke="#71717a"
+                  tick={{ fill: '#a1a1aa', fontSize: 11, fontFamily: 'monospace' }}
+                  interval={0}
+                />
 
-              {/* Target Curve Line */}
-              <path
-                d={curveD}
-                fill="none"
-                stroke="#059669"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+                <YAxis
+                  domain={[3.8, 7.6]}
+                  ticks={[4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5]}
+                  stroke="#71717a"
+                  tick={{ fill: '#a1a1aa', fontSize: 11, fontFamily: 'monospace' }}
+                  tickFormatter={(val) => `${val.toFixed(1)}`}
+                />
 
-              {/* Data Points */}
-              {PROTOCOL_DAYS_DATA.map((d) => {
-                const cx = getX(d.day);
-                const cy = getY(d.targetPh);
-                const isSelected = selectedDay === d.day;
-                const isNadir = d.targetPh === 4.5;
-                const userLogged = loggedPhValues[d.day];
+                <Tooltip content={<CustomChartTooltip />} />
 
-                return (
-                  <g
-                    key={d.day}
-                    className="cursor-pointer group"
-                    onClick={() => {
-                      setSelectedDay(d.day);
-                      setInputPh(userLogged !== undefined ? userLogged.toString() : d.targetPh.toString());
+                {/* Phase Demarcation Lines */}
+                <ReferenceLine
+                  x="D7"
+                  stroke="#d97706"
+                  strokeDasharray="3 3"
+                  strokeWidth={1}
+                  label={{
+                    value: 'Phase 1 ➔ 2 (Proteolysis)',
+                    fill: '#fbbf24',
+                    fontSize: 9,
+                    fontFamily: 'monospace',
+                    position: 'insideTopLeft',
+                  }}
+                />
+                <ReferenceLine
+                  x="D14"
+                  stroke="#0284c7"
+                  strokeDasharray="3 3"
+                  strokeWidth={1}
+                  label={{
+                    value: 'Phase 2 ➔ 3 (Anaerobic Seal)',
+                    fill: '#38bdf8',
+                    fontSize: 9,
+                    fontFamily: 'monospace',
+                    position: 'insideTopLeft',
+                  }}
+                />
+
+                {/* Critical Peak Nadir Reference Line at pH 4.5 */}
+                <ReferenceLine
+                  y={4.5}
+                  stroke="#f59e0b"
+                  strokeDasharray="4 4"
+                  strokeWidth={1.5}
+                  label={{
+                    value: '★ NADIR: 4.5 pH (Allelopathy Cleavage)',
+                    fill: '#f59e0b',
+                    fontSize: 10,
+                    fontFamily: 'monospace',
+                    position: 'insideBottomLeft',
+                  }}
+                />
+
+                {/* Neutral Stabilization Line at pH 7.0 */}
+                <ReferenceLine
+                  y={7.0}
+                  stroke="#10b981"
+                  strokeDasharray="4 4"
+                  strokeWidth={1.5}
+                  label={{
+                    value: 'Terminal Neutral pH 7.0',
+                    fill: '#34d399',
+                    fontSize: 10,
+                    fontFamily: 'monospace',
+                    position: 'insideTopRight',
+                  }}
+                />
+
+                {/* Theoretical Benchmark Curve */}
+                {showTheoreticalCurve && (
+                  <Line
+                    type="monotone"
+                    dataKey="targetPh"
+                    name="Target Benchmark"
+                    stroke="#10b981"
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    dot={{
+                      r: 3,
+                      fill: '#10b981',
+                      stroke: '#064e3b',
+                      strokeWidth: 1,
                     }}
-                  >
-                    {/* Pulsing ring for selected */}
-                    {isSelected && (
-                      <circle cx={cx} cy={cy} r="9" fill="none" stroke="#34d399" strokeWidth="2" opacity="0.8" />
-                    )}
+                    activeDot={{ r: 6, fill: '#34d399' }}
+                  />
+                )}
 
-                    {/* Point circle */}
-                    <circle
-                      cx={cx}
-                      cy={cy}
-                      r={isNadir ? 5.5 : 4}
-                      fill={isSelected ? '#34d399' : isNadir ? '#f59e0b' : '#059669'}
-                      stroke="#09090b"
-                      strokeWidth="1.5"
-                    />
-
-                    {/* User Logged Mark if exists */}
-                    {userLogged !== undefined && (
+                {/* Dynamic Recorded Batch pH Line (updates based on manual stirring checks) */}
+                <Line
+                  type="monotone"
+                  dataKey="recordedPh"
+                  name="Recorded Stirred Batch"
+                  stroke="#38bdf8"
+                  strokeWidth={3}
+                  connectNulls={false}
+                  dot={(props: any) => {
+                    const { cx, cy, payload } = props;
+                    if (!payload || payload.recordedPh === null) return <React.Fragment key={`empty-${props.index}`} />;
+                    const isSelected = selectedDay === payload.day;
+                    const isNadir = payload.day === 7;
+                    return (
                       <circle
+                        key={`rec-dot-${payload.day}`}
                         cx={cx}
-                        cy={getY(userLogged)}
-                        r="3"
-                        fill="#38bdf8"
+                        cy={cy}
+                        r={isSelected ? 6 : isNadir ? 5.5 : 4}
+                        fill={isNadir ? '#f59e0b' : '#38bdf8'}
                         stroke="#09090b"
-                        strokeWidth="1"
+                        strokeWidth={2}
+                        className="cursor-pointer"
                       />
-                    )}
-
-                    {/* Day number on X-axis */}
-                    <text
-                      x={cx}
-                      y={svgHeight - 8}
-                      fill={isSelected ? '#34d399' : '#a1a1aa'}
-                      fontSize="9"
-                      fontFamily="monospace"
-                      textAnchor="middle"
-                      fontWeight={isSelected ? 'bold' : 'normal'}
-                    >
-                      D{d.day}
-                    </text>
-                  </g>
-                );
-              })}
-            </svg>
+                    );
+                  }}
+                  activeDot={{ r: 7, fill: '#0284c7', stroke: '#ffffff', strokeWidth: 2 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
 
-          {/* Chart Legend */}
-          <div className="flex flex-wrap items-center justify-between text-[11px] font-mono text-zinc-400 mt-2 pt-2 border-t border-zinc-800 gap-2">
-            <div className="flex items-center gap-4">
+          {/* Recharts Legend & Sub-Theme Annotation */}
+          <div className="flex flex-wrap items-center justify-between text-[11px] font-mono text-zinc-400 mt-3 pt-3 border-t border-zinc-800 gap-2">
+            <div className="flex flex-wrap items-center gap-4">
               <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full inline-block"></span>
-                <span>Target Scientific Curve</span>
+                <span className="w-3 h-0.5 bg-emerald-500 inline-block border-dashed"></span>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+                <span>Theoretical Target Curve</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 bg-amber-500 rounded-full inline-block"></span>
-                <span>Peak Acidity Nadir (4.5 pH)</span>
+                <span className="w-3 h-1 bg-sky-400 inline-block"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-sky-400 inline-block"></span>
+                <span>Active Monitored Batch (Stirred Days)</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 bg-sky-400 rounded-full inline-block"></span>
-                <span>Your Logged Field Measurements</span>
+                <span className="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>
+                <span>Peak Lactone Nadir (Day 7: 4.5 pH)</span>
               </span>
             </div>
-            <span className="text-zinc-500">Sub-Theme 5: Indigenous Knowledge Systems</span>
+            <span className="text-zinc-500 text-[10px]">
+              Sub-Theme 5 (IKS) • Recharts Real-Time Synchronization
+            </span>
           </div>
         </div>
 
@@ -340,25 +454,59 @@ export const BatchFermentationLog: React.FC = () => {
               <span className="text-lg leading-tight">{selectedDayData.day}</span>
             </div>
             <div>
-              <span className="font-bold text-zinc-900 block text-sm">{selectedDayData.phase}</span>
-              <span className="text-zinc-600 block mt-0.5">{selectedDayData.notes}</span>
-              <div className="flex items-center gap-3 mt-1.5 text-[11px]">
-                <span className="text-zinc-800">
-                  Target pH: <strong className="text-emerald-700">{selectedDayData.targetPh}</strong>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-zinc-900 text-sm">{selectedDayData.phase}</span>
+                <span
+                  className={`text-[10px] px-1.5 py-0.2 border ${
+                    completedDays.includes(selectedDayData.day)
+                      ? 'bg-emerald-100 text-emerald-800 border-emerald-300 font-bold'
+                      : 'bg-amber-100 text-amber-800 border-amber-300'
+                  }`}
+                >
+                  {completedDays.includes(selectedDayData.day) ? '✓ STIRRING RECORDED' : '⚠️ STIRRING PENDING'}
                 </span>
-                {loggedPhValues[selectedDay] !== undefined && (
+              </div>
+              <span className="text-zinc-600 block mt-0.5">{selectedDayData.notes}</span>
+              <div className="flex items-center gap-3 mt-1.5 text-[11px] flex-wrap">
+                <span className="text-zinc-800">
+                  Target Benchmark: <strong className="text-emerald-700">{selectedDayData.targetPh} pH</strong>
+                </span>
+                {loggedPhValues[selectedDay] !== undefined ? (
                   <span className="text-sky-800">
-                    Logged Field pH: <strong>{loggedPhValues[selectedDay]}</strong> (Δ{' '}
+                    Logged Field Reading: <strong>{loggedPhValues[selectedDay]} pH</strong> (Δ{' '}
                     {(loggedPhValues[selectedDay] - selectedDayData.targetPh).toFixed(2)})
                   </span>
+                ) : (
+                  <span className="text-zinc-500 italic">No custom pH reading logged</span>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Inline Log Field Measurement */}
-          <div className="flex items-center gap-2 bg-white border border-zinc-300 p-2 shrink-0">
-            <span className="text-[11px] text-zinc-500">Record pH:</span>
+          {/* Inline Log Field Measurement & Stirring Toggle */}
+          <div className="flex flex-wrap items-center gap-2 bg-white border border-zinc-300 p-2 shrink-0">
+            <button
+              onClick={() => toggleDayCheck(selectedDay)}
+              className={`px-3 py-1 text-xs font-mono font-bold cursor-pointer border flex items-center gap-1.5 ${
+                completedDays.includes(selectedDay)
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                  : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+              }`}
+            >
+              {completedDays.includes(selectedDay) ? (
+                <>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>Marked Stirred</span>
+                </>
+              ) : (
+                <>
+                  <Square className="w-3.5 h-3.5" />
+                  <span>Record Stirring</span>
+                </>
+              )}
+            </button>
+
+            <span className="text-[11px] text-zinc-500 ml-1">Log pH:</span>
             <input
               type="number"
               step="0.1"
@@ -370,9 +518,9 @@ export const BatchFermentationLog: React.FC = () => {
             />
             <button
               onClick={handleSavePh}
-              className="bg-zinc-900 hover:bg-zinc-800 text-white px-3 py-1 text-xs font-mono font-bold cursor-pointer"
+              className="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1 text-xs font-mono font-bold cursor-pointer shadow-xs"
             >
-              Save Log
+              Save
             </button>
           </div>
         </div>
@@ -387,12 +535,12 @@ export const BatchFermentationLog: React.FC = () => {
               <span>Daily Manual Stirring & Agitation Checklists (Days 1–20)</span>
             </h4>
             <p className="text-xs text-zinc-500 mt-0.5">
-              Click checkboxes to log daily stirring tasks. Strict anaerobic sealing takes place on Days 15–20.
+              Click checkboxes to record daily stirring tasks. Checking a box updates the dynamic Recharts pH curve above in real time.
             </p>
           </div>
 
           {/* Filter Pills */}
-          <div className="flex items-center gap-1.5 font-mono text-xs">
+          <div className="flex items-center gap-1.5 font-mono text-xs flex-wrap">
             <button
               onClick={() => setFilterPhase('all')}
               className={`px-2.5 py-1 border text-[11px] cursor-pointer ${
@@ -445,7 +593,11 @@ export const BatchFermentationLog: React.FC = () => {
             return (
               <div
                 key={item.day}
-                onClick={() => setSelectedDay(item.day)}
+                onClick={() => {
+                  setSelectedDay(item.day);
+                  const logged = loggedPhValues[item.day];
+                  setInputPh(logged !== undefined ? logged.toString() : item.targetPh.toString());
+                }}
                 className={`p-3 border transition-all cursor-pointer flex items-start gap-3 text-xs ${
                   isSelected
                     ? 'border-zinc-900 bg-zinc-50 shadow-sm'
@@ -491,7 +643,7 @@ export const BatchFermentationLog: React.FC = () => {
                     </div>
 
                     <span className="text-[11px] text-zinc-500 font-normal">
-                      pH: <strong className="text-zinc-800">{item.targetPh}</strong>
+                      Target: <strong className="text-zinc-800">{item.targetPh} pH</strong>
                     </span>
                   </div>
 
@@ -513,3 +665,4 @@ export const BatchFermentationLog: React.FC = () => {
     </div>
   );
 };
+

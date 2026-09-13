@@ -9,12 +9,14 @@ import { SupplyGeoMap } from './components/SupplyGeoMap';
 import { Footer } from './components/Footer';
 import { OpenScienceModal } from './components/OpenScienceModal';
 import { ReportPdfModal } from './components/ReportPdfModal';
+import { IksCitationsModal } from './components/IksCitationsModal';
 import { LanguageProvider } from './context/LanguageContext';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
   const [modalType, setModalType] = useState<'latex' | 'csv' | 'hussain' | null>(null);
   const [isPdfModalOpen, setIsPdfModalOpen] = useState<boolean>(false);
+  const [isIksModalOpen, setIsIksModalOpen] = useState<boolean>(false);
 
   return (
     <LanguageProvider>
@@ -24,6 +26,7 @@ export default function App() {
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           onOpenPdfReport={() => setIsPdfModalOpen(true)}
+          onOpenIksMatrix={() => setIsIksModalOpen(true)}
         />
 
         {/* Main Content Area */}
@@ -37,6 +40,7 @@ export default function App() {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 onOpenReport={(type) => setModalType(type)}
+                onOpenIksMatrix={() => setIsIksModalOpen(true)}
               />
             </div>
           )}
@@ -68,10 +72,19 @@ export default function App() {
         </main>
 
         {/* 7. Open-Science Footer */}
-        <Footer onOpenReport={(type) => setModalType(type)} />
+        <Footer
+          onOpenReport={(type) => setModalType(type)}
+          onOpenIksMatrix={() => setIsIksModalOpen(true)}
+        />
 
         {/* Open-Science Data & Reports Modal */}
         <OpenScienceModal type={modalType} onClose={() => setModalType(null)} />
+
+        {/* IKS & Scientific Citations Modal */}
+        <IksCitationsModal
+          isOpen={isIksModalOpen}
+          onClose={() => setIsIksModalOpen(false)}
+        />
 
         {/* Export PDF Report Dossier Modal */}
         <ReportPdfModal
