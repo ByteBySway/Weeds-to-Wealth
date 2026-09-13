@@ -160,39 +160,48 @@ export function generateBiomassCSV(): string {
   return csv;
 }
 
+function createBase64SvgUri(svgString: string): string {
+  if (typeof window !== 'undefined' && typeof window.btoa === 'function') {
+    try {
+      return 'data:image/svg+xml;base64,' + window.btoa(unescape(encodeURIComponent(svgString.trim())));
+    } catch {
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svgString);
+    }
+  }
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svgString);
+}
+
 // Sample SVG leaf image data URL for instant zero-friction AI testing
-export const SAMPLE_PARTHENIUM_LEAF_BASE64 = 
-  "data:image/svg+xml;utf8," + encodeURIComponent(`
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-      <rect width="200" height="200" fill="#f4f4f5"/>
-      <path d="M100 180 C100 120 100 60 100 20" stroke="#166534" stroke-width="4" fill="none"/>
-      <path d="M100 150 C70 140 50 120 40 100 C70 110 90 125 100 135" fill="#15803d" stroke="#166534"/>
-      <path d="M100 150 C130 140 150 120 160 100 C130 110 110 125 100 135" fill="#15803d" stroke="#166534"/>
-      <path d="M100 110 C65 100 45 80 35 60 C65 70 85 85 100 95" fill="#16a34a" stroke="#166534"/>
-      <path d="M100 110 C135 100 155 80 165 60 C135 70 115 85 100 95" fill="#16a34a" stroke="#166534"/>
-      <path d="M100 70 C75 60 60 40 55 25 C75 35 90 50 100 60" fill="#22c55e" stroke="#166534"/>
-      <path d="M100 70 C125 60 140 40 145 25 C125 35 110 50 100 60" fill="#22c55e" stroke="#166534"/>
-      <circle cx="100" cy="20" r="4" fill="#ca8a04"/>
-      <text x="100" y="195" font-family="monospace" font-size="10" text-anchor="middle" fill="#52525b">Specimen: P. hysterophorus L.</text>
-    </svg>
-  `);
+export const SAMPLE_PARTHENIUM_LEAF_BASE64 = createBase64SvgUri(`
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+    <rect width="200" height="200" fill="#f4f4f5"/>
+    <path d="M100 180 C100 120 100 60 100 20" stroke="#166534" stroke-width="4" fill="none"/>
+    <path d="M100 150 C70 140 50 120 40 100 C70 110 90 125 100 135" fill="#15803d" stroke="#166534"/>
+    <path d="M100 150 C130 140 150 120 160 100 C130 110 110 125 100 135" fill="#15803d" stroke="#166534"/>
+    <path d="M100 110 C65 100 45 80 35 60 C65 70 85 85 100 95" fill="#16a34a" stroke="#166534"/>
+    <path d="M100 110 C135 100 155 80 165 60 C135 70 115 85 100 95" fill="#16a34a" stroke="#166534"/>
+    <path d="M100 70 C75 60 60 40 55 25 C75 35 90 50 100 60" fill="#22c55e" stroke="#166534"/>
+    <path d="M100 70 C125 60 140 40 145 25 C125 35 110 50 100 60" fill="#22c55e" stroke="#166534"/>
+    <circle cx="100" cy="20" r="4" fill="#ca8a04"/>
+    <text x="100" y="195" font-family="monospace" font-size="10" text-anchor="middle" fill="#52525b">Specimen: P. hysterophorus L.</text>
+  </svg>
+`);
 
 // Sample non-target animal/pet SVG for instantaneous rejection protocol testing
-export const SAMPLE_NON_TARGET_PET_BASE64 = 
-  "data:image/svg+xml;utf8," + encodeURIComponent(`
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-      <rect width="200" height="200" fill="#fef2f2"/>
-      <circle cx="100" cy="105" r="55" fill="#eab308"/>
-      <!-- Ears -->
-      <polygon points="55,60 85,95 45,95" fill="#ca8a04"/>
-      <polygon points="145,60 115,95 155,95" fill="#ca8a04"/>
-      <!-- Eyes -->
-      <circle cx="82" cy="100" r="6" fill="#18181b"/>
-      <circle cx="118" cy="100" r="6" fill="#18181b"/>
-      <!-- Snout -->
-      <ellipse cx="100" cy="120" rx="16" ry="12" fill="#fef08a"/>
-      <circle cx="100" cy="116" r="5" fill="#18181b"/>
-      <path d="M94 125 Q100 132 106 125" stroke="#18181b" stroke-width="2" fill="none"/>
-      <text x="100" y="185" font-family="monospace" font-size="9" text-anchor="middle" fill="#dc2626" font-weight="bold">Non-Target Specimen: Domestic Pet (Canis lupus)</text>
-    </svg>
-  `);
+export const SAMPLE_NON_TARGET_PET_BASE64 = createBase64SvgUri(`
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+    <rect width="200" height="200" fill="#fef2f2"/>
+    <circle cx="100" cy="105" r="55" fill="#eab308"/>
+    <!-- Ears -->
+    <polygon points="55,60 85,95 45,95" fill="#ca8a04"/>
+    <polygon points="145,60 115,95 155,95" fill="#ca8a04"/>
+    <!-- Eyes -->
+    <circle cx="82" cy="100" r="6" fill="#18181b"/>
+    <circle cx="118" cy="100" r="6" fill="#18181b"/>
+    <!-- Snout -->
+    <ellipse cx="100" cy="120" rx="16" ry="12" fill="#fef08a"/>
+    <circle cx="100" cy="116" r="5" fill="#18181b"/>
+    <path d="M94 125 Q100 132 106 125" stroke="#18181b" stroke-width="2" fill="none"/>
+    <text x="100" y="185" font-family="monospace" font-size="9" text-anchor="middle" fill="#dc2626" font-weight="bold">Non-Target Specimen: Domestic Pet (Canis lupus)</text>
+  </svg>
+`);
