@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Printer, X, Download, ShieldCheck, CheckCircle2, FileText, Loader2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { exportDossierPdf } from '../utils/pdfGenerator';
+import { PartheniumLogo } from './PartheniumLogo';
 
 interface ReportPdfModalProps {
   isOpen: boolean;
@@ -134,19 +135,29 @@ export const ReportPdfModal: React.FC<ReportPdfModalProps> = ({
         <div className="p-6 sm:p-10 overflow-y-auto font-sans text-zinc-900 bg-white">
           
           {/* Header Section */}
-          <div className="border-b-2 border-zinc-900 pb-5 mb-6 text-center">
-            <span className="font-mono text-xs uppercase tracking-widest text-emerald-800 font-extrabold block">
-              NATIONAL CHILDREN'S SCIENCE CONGRESS (NCSC 2026-27)
-            </span>
-            <span className="font-mono text-[11px] text-zinc-600 block mt-0.5 font-bold">
-              SUB-THEME 5: INDIGENOUS KNOWLEDGE SYSTEMS (IKS) FOR SUSTAINABLE DEVELOPMENT
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-950 mt-2 uppercase">
-              WEEDS TO WEALTH: TECHNICAL RESEARCH & FORMULATION DOSSIER
-            </h1>
-            <p className="text-xs font-mono text-zinc-500 mt-1">
-              Decentralized Bio-Conversion of Invasive Parthenium hysterophorus into Allelopathy-Free Organic Kunapajala
-            </p>
+          <div className="border-b-2 border-zinc-900 pb-5 mb-6">
+            <div className="flex items-center justify-between gap-4">
+              <div className="shrink-0 hidden sm:block">
+                <PartheniumLogo className="w-14 h-14" />
+              </div>
+              <div className="text-center flex-1">
+                <span className="font-mono text-xs uppercase tracking-widest text-emerald-800 font-extrabold block">
+                  NATIONAL CHILDREN'S SCIENCE CONGRESS (NCSC 2026-27)
+                </span>
+                <span className="font-mono text-[11px] text-zinc-600 block mt-0.5 font-bold">
+                  SUB-THEME 5: INDIGENOUS KNOWLEDGE SYSTEMS (IKS) FOR SUSTAINABLE DEVELOPMENT
+                </span>
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-zinc-950 mt-1.5 uppercase">
+                  WEEDS TO WEALTH: TECHNICAL RESEARCH & FORMULATION DOSSIER
+                </h1>
+                <p className="text-xs font-mono text-zinc-500 mt-1">
+                  Decentralized Bio-Conversion of Invasive Parthenium hysterophorus into Allelopathy-Free Organic Kunapajala
+                </p>
+              </div>
+              <div className="shrink-0 hidden sm:block">
+                <PartheniumLogo className="w-14 h-14 opacity-0" />
+              </div>
+            </div>
           </div>
 
           {/* Metadata Grid */}

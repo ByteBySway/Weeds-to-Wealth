@@ -1,7 +1,8 @@
 import React from 'react';
 import { ActiveTab, LanguageCode } from '../types';
 import { useLanguage } from '../context/LanguageContext';
-import { Printer, Languages, ChevronDown } from 'lucide-react';
+import { Printer, Languages, Activity } from 'lucide-react';
+import { PartheniumLogo } from './PartheniumLogo';
 
 interface NavbarProps {
   activeTab: ActiveTab;
@@ -26,53 +27,61 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header className="bg-white border-b border-zinc-300 px-4 sm:px-6 py-3 flex flex-wrap justify-between items-center sticky top-0 z-50 shadow-xs print:hidden">
-      {/* Brand Title */}
-      <div className="flex items-center gap-3 py-1">
-        <span className="inline-block w-3 h-3 bg-emerald-700"></span>
-        <div className="flex items-center gap-2.5">
-          <span className="font-mono text-base sm:text-xl font-bold tracking-tight text-zinc-900">
-            {t.appName}
+    <header className="bg-white border-b border-zinc-300 px-4 sm:px-6 py-3 sticky top-0 z-50 shadow-xs print:hidden">
+      {/* Row 1: Brand Title, Parthenium Logo, NCSC Badge (Left) & Nav Tabs (Right) */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        {/* Brand Left: Parthenium Leaf Logo + WEEDS TO WEALTH + NCSC 2026-27 */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          {/* Winning Parthenium Leaf enclosing Lab Flask Logo (No outer border) */}
+          <div className="shrink-0 flex items-center justify-center">
+            <PartheniumLogo className="w-7 h-7 sm:w-8 sm:h-8 hover:scale-105 transition-transform" />
+          </div>
+
+          {/* Title */}
+          <span className="font-mono text-lg sm:text-2xl font-black tracking-tight text-zinc-950 uppercase">
+            WEEDS TO WEALTH
           </span>
-          <span className="text-[11px] bg-zinc-100 text-zinc-600 px-2 py-0.5 border border-zinc-300 font-mono hidden md:inline-block">
-            {t.ncscBadge}
-          </span>
+
+          {/* NCSC 2026-27 Badge matching screenshot */}
+          <div className="border border-zinc-300 bg-transparent px-2 sm:px-2.5 py-0.5 font-mono text-zinc-600 text-xs sm:text-sm font-normal">
+            NCSC 2026-27
+          </div>
         </div>
+
+        {/* Right Nav Tabs matching screenshot: [ DASHBOARD ] [ FORMULATION ENGINE ] [ AI SCANNER ] [ SUPPLY MAP ] */}
+        <nav className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto">
+          {navItems.map((item) => {
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`px-3 py-1 text-xs sm:text-sm uppercase font-mono tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+                  isActive
+                    ? 'text-emerald-800 font-bold border border-emerald-600 bg-white shadow-xs'
+                    : 'text-zinc-600 border border-transparent hover:border-zinc-300 hover:text-zinc-900'
+                }`}
+              >
+                [ {item.label} ]
+              </button>
+            );
+          })}
+        </nav>
       </div>
 
-      {/* Center Nav Items */}
-      <nav className="flex items-center gap-1 sm:gap-2 py-1 overflow-x-auto order-3 lg:order-2 w-full lg:w-auto mt-2 lg:mt-0 justify-center">
-        {navItems.map((item) => {
-          const isActive = activeTab === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm uppercase tracking-wider font-mono transition-all rounded-none border whitespace-nowrap cursor-pointer ${
-                isActive
-                  ? 'text-emerald-800 font-bold border-emerald-700 bg-emerald-50 shadow-[2px_2px_0px_0px_rgba(4,120,87,1)]'
-                  : 'text-zinc-600 border-transparent hover:border-zinc-300 hover:text-zinc-900 hover:bg-zinc-100'
-              }`}
-            >
-              [ {item.label} ]
-            </button>
-          );
-        })}
-      </nav>
-
-      {/* Top-Right Tools: Language Selector [ EN | HI | OD ] + Export PDF Report */}
-      <div className="flex items-center gap-2 sm:gap-3 py-1 order-2 lg:order-3">
-        {/* Language Selector Dropdown [ EN | HI | OD ] */}
-        <div className="flex items-center border border-zinc-300 bg-zinc-50 p-0.5 font-mono text-xs">
-          <Languages className="w-3.5 h-3.5 text-zinc-500 ml-1.5 mr-1 hidden sm:inline" />
+      {/* Row 2: Left-Aligned Language Selector, IKS & Citations Matrix, and Export PDF Report */}
+      <div className="flex flex-wrap items-center gap-3 pt-2 mt-1">
+        {/* Language Selector: [ 文A | EN | HI | OD ] */}
+        <div className="flex items-center border border-zinc-300 bg-white p-0.5 shadow-xs">
+          <Languages className="w-4 h-4 text-zinc-500 mx-1.5" />
           {(['EN', 'HI', 'OD'] as LanguageCode[]).map((langCode) => (
             <button
               key={langCode}
               onClick={() => setLanguage(langCode)}
-              className={`px-2 py-1 text-[11px] font-bold transition-all cursor-pointer ${
+              className={`px-2.5 py-0.5 text-xs sm:text-sm font-mono font-bold transition-all cursor-pointer ${
                 language === langCode
-                  ? 'bg-zinc-900 text-white shadow-xs'
-                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/60'
+                  ? 'bg-zinc-950 text-white shadow-xs'
+                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
               }`}
             >
               {langCode}
@@ -80,28 +89,26 @@ export const Navbar: React.FC<NavbarProps> = ({
           ))}
         </div>
 
-        {/* View IKS & Academic Citations Matrix Button */}
+        {/* IKS & Citations Matrix Button */}
         {onOpenIksMatrix && (
           <button
             onClick={onOpenIksMatrix}
-            className="px-2.5 sm:px-3 py-1.5 text-xs font-mono font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-400 flex items-center gap-1.5 cursor-pointer shadow-[2px_2px_0px_0px_rgba(217,119,6,0.5)] active:translate-x-[1px] active:translate-y-[1px] transition-all"
-            title="View Surapala Vrikshayurveda & HPLC Peer-Reviewed Academic Citations"
+            className="border-2 border-amber-400 bg-[#fffdf0] hover:bg-amber-100/90 text-[#78350f] font-mono font-bold text-xs sm:text-sm px-3.5 sm:px-4 py-1 flex items-center gap-2 shadow-[0px_3px_0px_0px_#f59e0b] active:translate-y-0.5 transition-all cursor-pointer whitespace-nowrap"
+            title="Surapala Vrikshayurveda vs. Hussain et al. (2017) Peer-Reviewed Matrix"
           >
-            <span>📜</span>
-            <span className="hidden xl:inline">IKS & Citations Matrix</span>
-            <span className="xl:hidden">IKS Matrix</span>
+            <span className="text-base">📜</span>
+            <span>IKS & Citations Matrix</span>
           </button>
         )}
 
-        {/* Export PDF Report Button */}
+        {/* Export PDF Report Button matching screenshot */}
         <button
           onClick={onOpenPdfReport}
-          className="px-2.5 sm:px-3.5 py-1.5 text-xs font-mono font-bold bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-950 flex items-center gap-1.5 cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] transition-all"
-          title="Open printable research and formulation dossier"
+          className="bg-[#0f1f18] hover:bg-[#183126] text-white border border-zinc-800 px-3.5 sm:px-4 py-1 text-xs sm:text-sm font-mono font-bold flex items-center gap-2 shadow-xs active:translate-y-0.5 transition-all cursor-pointer whitespace-nowrap"
+          title="Export NCSC Research & Formulation Evaluation Dossier"
         >
-          <Printer className="w-3.5 h-3.5 text-emerald-400" />
-          <span className="hidden sm:inline">{t.exportPdfBtn}</span>
-          <span className="sm:hidden">PDF</span>
+          <Printer className="w-4 h-4 text-emerald-400" />
+          <span>Export PDF Report</span>
         </button>
       </div>
     </header>

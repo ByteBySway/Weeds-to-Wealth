@@ -277,6 +277,63 @@ export const NutrientParityMatrix: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* High-Stakes Brutalist 3-Column Telemetry Highlight Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-6 border-t border-zinc-200 font-mono">
+        {/* Card 1: Organic Carbon Boost (+28% Soil Humus) */}
+        <div className="p-4 bg-zinc-50 border-2 border-zinc-900 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex items-center justify-between border-b border-zinc-200 pb-2 mb-2">
+            <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">
+              [ SOIL HUMUS DYNAMICS ]
+            </span>
+            <span className="text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300 px-1.5 py-0.2 font-bold">
+              VERIFIED
+            </span>
+          </div>
+          <div className="text-2xl sm:text-3xl font-black text-emerald-700">
+            +28% <span className="text-xs font-normal text-zinc-600 font-sans">Soil Humus</span>
+          </div>
+          <p className="text-xs text-zinc-700 mt-2 leading-relaxed font-sans">
+            Anaerobic microbial digestate enriches total Organic Carbon Pool (+28.4% humus), improving water-holding capacity in drought-prone Kalahandi soils.
+          </p>
+        </div>
+
+        {/* Card 2: Sulfur Enrichment (Cow Urine & Mustard Cake) */}
+        <div className="p-4 bg-zinc-50 border-2 border-zinc-900 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex items-center justify-between border-b border-zinc-200 pb-2 mb-2">
+            <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">
+              [ SULFUR ENRICHMENT ]
+            </span>
+            <span className="text-[10px] bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.2 font-bold">
+              OILSEEDS KEY
+            </span>
+          </div>
+          <div className="text-2xl sm:text-3xl font-black text-amber-600">
+            +60.7% <span className="text-xs font-normal text-zinc-600 font-sans">Bio-Sulfate (SO₄²⁻)</span>
+          </div>
+          <p className="text-xs text-zinc-700 mt-2 leading-relaxed font-sans">
+            Cow urine & mustard cake co-fermentation yields plant-absorbable organic sulfur, vital for oilseed protein, methionine, and oil-content synthesis.
+          </p>
+        </div>
+
+        {/* Card 3: Cost Reduction (-84% Input Cost per Acre) */}
+        <div className="p-4 bg-zinc-50 border-2 border-zinc-900 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex items-center justify-between border-b border-zinc-200 pb-2 mb-2">
+            <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">
+              [ AGRONOMIC ECONOMICS ]
+            </span>
+            <span className="text-[10px] bg-emerald-800 text-white px-1.5 py-0.2 font-bold">
+              ₹0 WEED ASSET
+            </span>
+          </div>
+          <div className="text-2xl sm:text-3xl font-black text-emerald-800">
+            -84% <span className="text-xs font-normal text-zinc-600 font-sans">Cost / Acre</span>
+          </div>
+          <p className="text-xs text-zinc-700 mt-2 leading-relaxed font-sans">
+            Slashes seasonal input expenditure from ₹3,318/acre (synthetic Urea + DAP + MOP stack) down to negligible zero-cost local weed biomass inputs.
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

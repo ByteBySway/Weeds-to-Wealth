@@ -13,21 +13,21 @@ interface HeroSectionProps {
 export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, onOpenReport, onOpenIksMatrix }) => {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-      {/* Top Protocol Tag */}
-      <div className="inline-flex items-center gap-2 border border-emerald-800/40 bg-emerald-50 px-3 py-1 text-xs font-mono text-emerald-800 mb-6 font-semibold shadow-[1px_1px_0px_0px_rgba(4,120,87,0.3)]">
-        <span className="w-2 h-2 rounded-full bg-emerald-700 animate-pulse"></span>
-        OPEN-SOURCE AGRI-CIRCULARITY ARCHITECTURE
+      {/* Top Protocol Tag - Exact inline badge from Screenshot */}
+      <div className="inline-flex items-center gap-2 border border-emerald-400/90 bg-emerald-50/70 px-3 py-1 text-xs font-mono text-emerald-900 mb-6 font-semibold shadow-xs">
+        <span className="w-2 h-2 rounded-full bg-emerald-600 inline-block"></span>
+        <span className="tracking-wider">OPEN-SOURCE AGRI-CIRCULARITY ARCHITECTURE</span>
       </div>
 
-      {/* Main Headline & Subtext */}
-      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-zinc-900 mb-4 max-w-5xl leading-tight">
+      {/* Main Headline & Subtext matching screenshot */}
+      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-zinc-950 mb-4 max-w-5xl leading-[1.08] uppercase">
         REPLACING SYNTHETIC NPK WITH TOXIC INVASIVE WEEDS.
       </h1>
-      <p className="text-base sm:text-lg text-zinc-700 mb-3 max-w-4xl font-medium leading-relaxed">
+      <p className="text-base sm:text-lg text-zinc-700 mb-3 max-w-4xl font-normal leading-relaxed">
         Scaling Vrikshayurveda's Kunapajala for Mission LiFE. NCSC 2026-27 | Sub-Theme 5.
       </p>
       <p className="text-sm sm:text-base text-zinc-600 mb-10 max-w-4xl leading-relaxed">
-        Reclaiming agro-ecological sovereignty through biochemical transformation of <em className="font-semibold text-zinc-900 not-italic">Parthenium hysterophorus</em>. Converting noxious allelopathic bio-hazards into high-potency liquid bio-fertilizer at zero commercial expense.
+        Reclaiming agro-ecological sovereignty through biochemical transformation of <strong className="font-semibold text-zinc-900">Parthenium hysterophorus</strong>. Converting noxious allelopathic bio-hazards into high-potency liquid bio-fertilizer at zero commercial expense.
       </p>
 
       {/* 3 Executive Metric Cards */}
