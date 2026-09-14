@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, type Variants } from 'motion/react';
 import { BatchFermentationLog } from './BatchFermentationLog';
 import { PartheninDetoxVisualizer } from './PartheninDetoxVisualizer';
+import { InteractiveMechanismCanvas } from './InteractiveMechanismCanvas';
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -210,6 +211,9 @@ export const FermentationProtocol: React.FC = () => {
 
       {/* MODULE 3: PARTHENIN DETOX KINETICS VISUALIZER */}
       <PartheninDetoxVisualizer />
+
+      {/* MODULE 4: INTERACTIVE MOLECULAR & PROCESS MECHANISM DIGITAL CANVAS */}
+      <InteractiveMechanismCanvas />
 
       {/* Sub-Panel: Batch Fermentation Log with Live Recharts pH Curve Tracking and Daily Manual Stirring Checklists */}
       <BatchFermentationLog />
