@@ -12,7 +12,7 @@ export default defineConfig(() => {
       },
     },
     server: {
-      // HMR is completely disabled in AI Studio container to eliminate websocket errors
+      // HMR disabled to prevent websocket connection issues in proxied sandbox
       hmr: false,
       watch: null,
     },
