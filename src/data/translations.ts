@@ -106,6 +106,28 @@ export interface Translations {
   cationBioavailLabel: string;
   zeroRawCostLabel: string;
 
+  // Tab 2: Phytohormonal & Crop Growth Mechanism
+  tabPhytoMech: string;
+  phytoMechTitle: string;
+  phytoMechSubtitle: string;
+  cropToggleLabel: string;
+  cropPaddy: string;
+  cropMaize: string;
+  cropCotton: string;
+  telemetryAuxinTitle: string;
+  telemetryMbcTitle: string;
+  telemetryRootIndexTitle: string;
+  comparativeTitle: string;
+  comparativeSubtitle: string;
+  kunapajalaDelivery: string;
+  syntheticUreaDelivery: string;
+  dilutionLevelLabel: string;
+  rootZoneFluxTitle: string;
+  rhizosphereMicrobialLabel: string;
+  chlorophyllSpadLabel: string;
+  rootDepthLabel: string;
+  nutrientLeachingLabel: string;
+
   // Crop Yield & Carbon Predictor
   cropPredictorBadge: string;
   cropPredictorTitle: string;
@@ -253,6 +275,28 @@ export const TRANSLATIONS: Record<LanguageCode, Translations> = {
     cationBioavailLabel: 'CATION BIO-AVAILABILITY (CEC)',
     zeroRawCostLabel: 'COMMERCIAL RAW INPUT COST',
 
+    // Tab 2: Phytohormonal & Crop Growth Mechanism
+    tabPhytoMech: '2. Phytohormonal & Crop Growth Mechanism',
+    phytoMechTitle: 'Phyto-Ecological & Phytohormonal Assimilation Mechanism',
+    phytoMechSubtitle: 'Simulating plant growth promotion, root-zone nutrient uptake, and physiological yield response.',
+    cropToggleLabel: 'SELECT TARGET CROPPING SYSTEM:',
+    cropPaddy: 'Paddy (Oryza sativa)',
+    cropMaize: 'Maize (Zea mays)',
+    cropCotton: 'Cotton (Gossypium hirsutum)',
+    telemetryAuxinTitle: 'AUXIN / CYTOKININ EQUIVALENT ACTIVITY',
+    telemetryMbcTitle: 'SOIL MICROBIAL BIOMASS CARBON (MBC)',
+    telemetryRootIndexTitle: 'ROOT ELONGATION INDEX',
+    comparativeTitle: 'KUNAPAJALA BIO-STIMULANT VS. COMMERCIAL SYNTHETIC UREA',
+    comparativeSubtitle: 'Comparative biological agronomic delivery matrix across rhizosphere health and physiological nutrient efficiency.',
+    kunapajalaDelivery: 'Kunapajala Foliar & Rhizosphere Delivery',
+    syntheticUreaDelivery: 'Synthetic Urea (46% N) Control',
+    dilutionLevelLabel: 'KUNAPAJALA DILUTION RATE:',
+    rootZoneFluxTitle: 'RHIZOSPHERE ROOT ARCHITECTURE & BIO-FLUX',
+    rhizosphereMicrobialLabel: 'Rhizosphere Microbial Active Flora',
+    chlorophyllSpadLabel: 'Chlorophyll SPAD / Photosynthetic Efficiency',
+    rootDepthLabel: 'Deep Rooting Surface & Anchoring Depth',
+    nutrientLeachingLabel: 'Nitrate Leaching / Runoff Waste',
+
     pdfTitle: "NATIONAL CHILDREN'S SCIENCE CONGRESS (NCSC 2026-27)",
     pdfSubtheme: 'SUB-THEME 5: INDIGENOUS KNOWLEDGE SYSTEMS (IKS) FOR SUSTAINABLE DEVELOPMENT',
     pdfDossierHeader: 'WEEDS TO WEALTH: TECHNICAL RESEARCH & FORMULATION DOSSIER',
@@ -397,6 +441,28 @@ export const TRANSLATIONS: Record<LanguageCode, Translations> = {
     cationBioavailLabel: 'धनायन जैव-उपलब्धता (सीईसी)',
     zeroRawCostLabel: 'व्यावसायिक कच्चा माल लागत',
 
+    // Tab 2: Phytohormonal & Crop Growth Mechanism
+    tabPhytoMech: '२. पादप हार्मोन एवं फसल वृद्धि क्रियाविधि',
+    phytoMechTitle: 'पादप-पारिस्थितिक एवं पादप हार्मोन अवशोषण क्रियाविधि',
+    phytoMechSubtitle: 'पादप वृद्धि संवर्धन, जड़-क्षेत्र पोषक तत्व अवशोषण एवं उपज प्रतिक्रिया का अनुकरण।',
+    cropToggleLabel: 'लक्ष्य फसल प्रणाली चुनें:',
+    cropPaddy: 'धान (ओरिज़ा सैटिवा)',
+    cropMaize: 'मक्का (ज़िया मेज़)',
+    cropCotton: 'कपास (गॉसिपियम हिरसुटम)',
+    telemetryAuxinTitle: 'ऑक्सिन / साइटोकाइनिन समतुल्य सक्रियता',
+    telemetryMbcTitle: 'मृदा सूक्ष्मजीवी बायोमास कार्बन (एमबीसी)',
+    telemetryRootIndexTitle: 'जड़ विस्तार सूचकांक',
+    comparativeTitle: 'कुणपजल बायो-उत्तेजक बनाम व्यावसायिक सिंथेटिक यूरिया',
+    comparativeSubtitle: 'जड़-क्षेत्र स्वास्थ्य एवं पादप पोषक दक्षता पर तुलनात्मक जैविक कृषि प्रभाव।',
+    kunapajalaDelivery: 'कुणपजल पर्णीय एवं जड़-क्षेत्र आपूर्ति',
+    syntheticUreaDelivery: 'सिंथेटिक यूरिया (46% एन) नियंत्रण',
+    dilutionLevelLabel: 'कुणपजल तनुकरण दर:',
+    rootZoneFluxTitle: 'जड़-क्षेत्र संरचना एवं जैविक प्रवाह',
+    rhizosphereMicrobialLabel: 'जड़-क्षेत्र सक्रिय सूक्ष्मजीव संवर्धन',
+    chlorophyllSpadLabel: 'पर्णहरित एसपीएडी / प्रकाश संश्लेषक दक्षता',
+    rootDepthLabel: 'गहरी जड़ प्रणाली एवं मिट्टी में पकड़',
+    nutrientLeachingLabel: 'नाइट्रेट रिसाव / अपवाह अपव्यय',
+
     pdfTitle: 'राष्ट्रीय बाल विज्ञान कांग्रेस (एनसीएससी 2026-27)',
     pdfSubtheme: 'उप-विषय 5: सतत विकास हेतु पारंपरिक ज्ञान प्रणाली (आईकेएस)',
     pdfDossierHeader: 'खरपतवार से समृद्धि: तकनीकी अनुसंधान एवं फॉर्मूलेशन रिपोर्ट',
@@ -540,6 +606,28 @@ export const TRANSLATIONS: Record<LanguageCode, Translations> = {
     npkParityLabel: 'ଏନପିକେ ପୋଷକତତ୍ତ୍ୱ ସମାନତା',
     cationBioavailLabel: 'ଜୈବ-ଉପଲବ୍ଧତା (ସିଇସି)',
     zeroRawCostLabel: 'କଞ୍ଚାମାଲ ଖର୍ଚ୍ଚ',
+
+    // Tab 2: Phytohormonal & Crop Growth Mechanism
+    tabPhytoMech: '୨. ଉଦ୍ଭିଦ ହରମୋନ ଓ ଫସଲ ବୃଦ୍ଧି ପ୍ରକ୍ରିୟା',
+    phytoMechTitle: 'ଉଦ୍ଭିଦ-ପାରିସ୍ଥିତିକ ଓ ହରମୋନ ଶୋଷଣ ପ୍ରଣାଳୀ',
+    phytoMechSubtitle: 'ଉଦ୍ଭିଦ ବୃଦ୍ଧି, ଚେର ମୂଳ ପୋଷକତତ୍ତ୍ୱ ଗ୍ରହଣ ଏବଂ ଫସଲ ଅମଳ ପ୍ରତିକ୍ରିୟାର ସିମୁଲେସନ।',
+    cropToggleLabel: 'ଲକ୍ଷ୍ୟ ଫସଲ ବାଛନ୍ତୁ:',
+    cropPaddy: 'ଧାନ (ଓରାଇଜା ସାଟିଭା)',
+    cropMaize: 'ମକା (ଜିଆ ମେଜ୍)',
+    cropCotton: 'କପା (ଗସିପିୟମ ହିରସୁଟମ)',
+    telemetryAuxinTitle: 'ଅକ୍ସିନ୍ / ସାଇଟୋକାଇନିନ୍ ସମତୁଲ ସକ୍ରିୟତା',
+    telemetryMbcTitle: 'ମାଟି ଅଣୁଜୀବ ବାୟୋମାସ କାର୍ବନ (ଏମବିସି)',
+    telemetryRootIndexTitle: 'ଚେର ବୃଦ୍ଧି ସୂଚକାଙ୍କ',
+    comparativeTitle: 'କୁଣପଜଳ ବାୟୋ-ଉତ୍ତେଜକ ବନାମ ରାସାୟନିକ ୟୁରିଆ',
+    comparativeSubtitle: 'ମୂଳ କ୍ଷେତ୍ର ସ୍ୱାସ୍ଥ୍ୟ ଏବଂ ପୋଷକ କ୍ଷମତା ଉପରେ ତୁଳନାତ୍ମକ ଜୈବିକ ପ୍ରଭାବ।',
+    kunapajalaDelivery: 'କୁଣପଜଳ ପତ୍ର ସ୍ପ୍ରେ ଓ ଚେର ମୂଳ ପ୍ରୟୋଗ',
+    syntheticUreaDelivery: 'ରାସାୟନିକ ୟୁରିଆ (୪୬% ଏନ) ନିୟନ୍ତ୍ରଣ',
+    dilutionLevelLabel: 'କୁଣପଜଳ ମିଶ୍ରଣ ଅନୁପାତ:',
+    rootZoneFluxTitle: 'ଚେର ମୂଳ ସଂରଚନା ଓ ଜୈବିକ ପ୍ରବାହ',
+    rhizosphereMicrobialLabel: 'ମୂଳ-କ୍ଷେତ୍ର ସକ୍ରିୟ ଅଣୁଜୀବ ବୃଦ୍ଧି',
+    chlorophyllSpadLabel: 'ପତ୍ର ହରିତକ ଏସପିଏଡି / ଆଲୋକଶ୍ଳେଷଣ ଦକ୍ଷତା',
+    rootDepthLabel: 'ଗଭୀର ଚେର ସଂପ୍ରସାରଣ ଓ ମାଟି ବନ୍ଧନ',
+    nutrientLeachingLabel: 'ନାଇଟ୍ରେଟ ଅପଚୟ / ନଷ୍ଟ ପ୍ରତିଶତ',
 
     pdfTitle: 'ଜାତୀୟ ଶିଶୁ ବିଜ୍ଞାନ କଂଗ୍ରେସ (ଏନସିଏସସି ୨୦୨୬-୨୭)',
     pdfSubtheme: 'ଉପ-ପ୍ରସଙ୍ଗ ୫: ସ୍ଥାୟୀ ବିକାଶ ପାଇଁ ପାରମ୍ପରିକ ଜ୍ଞାନ କୌଶଳ (ଆଇକେଏସ)',

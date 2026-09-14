@@ -28,6 +28,15 @@
     cursor: pointer;
     border-radius: 0;
   }
+
+  /* Utility for hiding scrollbar while keeping horizontal swipe/scroll active */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 /* Optimized Print Layout for NCSC Report Dossier */
