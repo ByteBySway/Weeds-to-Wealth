@@ -389,44 +389,45 @@ export const InteractiveMechanismCanvas: React.FC = () => {
 
   return (
     <div className="w-full bg-white text-zinc-900 border border-zinc-300 font-sans shadow-xs my-8 overflow-hidden">
-      {/* 1. LIGHT-MODE BRUTALIST HEADER */}
-      <div className="border-b border-zinc-300 p-4 sm:p-6 bg-white flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
+      {/* 1. LIGHT-MODE BRUTALIST HEADER (FULL-WIDTH STACK) */}
+      <div className="border-b border-zinc-300 p-4 sm:p-6 bg-white flex flex-col space-y-4 w-full">
+        {/* Main Title & Subtitle in full width */}
+        <div className="w-full">
           <div className="inline-flex items-center gap-2 border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-xs font-mono text-emerald-800 font-semibold mb-2">
             <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
             <span>{t.simulatorBadge}</span>
           </div>
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-zinc-950 uppercase font-mono">
+          <h2 className="w-full text-xl md:text-2xl lg:text-3xl font-mono font-bold tracking-tight text-zinc-950 uppercase">
             {t.simulatorTitle}
           </h2>
-          <p className="text-zinc-600 text-xs sm:text-sm mt-1 font-mono max-w-3xl">
+          <p className="text-zinc-600 text-xs sm:text-sm mt-1 font-mono max-w-4xl">
             {t.simulatorSubtitle}
           </p>
         </div>
 
-        {/* Two Interactive Switcher Tabs */}
-        <div className="flex flex-wrap items-center gap-2 font-mono text-xs shrink-0">
+        {/* 3. CLEAN TAB BAR ALIGNMENT: Dedicated full-width container row directly below the header text */}
+        <div className="w-full border border-zinc-300 bg-zinc-50 p-2 flex flex-wrap items-center gap-2 font-mono text-xs">
           <button
             onClick={() => setActiveView('chelation')}
-            className={`px-3.5 py-2 border font-bold flex items-center gap-2 transition-all cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+            className={`flex-1 sm:flex-initial px-4 py-2.5 border font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
               activeView === 'chelation'
                 ? 'bg-zinc-950 text-white border-zinc-950 font-black'
                 : 'bg-white hover:bg-zinc-100 text-zinc-800 border-zinc-300'
             }`}
           >
-            <Atom className="w-4 h-4 text-emerald-400" />
+            <Atom className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>[ {t.tabChelation} ]</span>
           </button>
 
           <button
             onClick={() => setActiveView('synergy')}
-            className={`px-3.5 py-2 border font-bold flex items-center gap-2 transition-all cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+            className={`flex-1 sm:flex-initial px-4 py-2.5 border font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
               activeView === 'synergy'
                 ? 'bg-zinc-950 text-white border-zinc-950 font-black'
                 : 'bg-white hover:bg-zinc-100 text-zinc-800 border-zinc-300'
             }`}
           >
-            <Sprout className="w-4 h-4 text-emerald-400" />
+            <Sprout className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>[ {t.tabPhytoMech || t.tabSynergy} ]</span>
           </button>
         </div>
