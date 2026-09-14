@@ -1,20 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="100%" height="100%" fill="none">
-  <defs>
-    <!-- Mask to punch out the solid white Erlenmeyer flask from the green Parthenium leaf -->
-    <mask id="flaskCutout">
-      <rect width="1000" height="1000" fill="#ffffff" />
-      <!-- Erlenmeyer flask shape cut out in solid black -->
-      <!-- Top Lip -->
-      <rect x="445" y="415" width="110" height="22" rx="7" fill="#000000" />
-      <!-- Neck -->
-      <rect x="458" y="428" width="84" height="122" rx="3" fill="#000000" />
-      <!-- Conical Body -->
-      <polygon points="458,546 542,546 626,768 374,768" fill="#000000" />
-      <!-- Rounded base corners and flat bottom -->
-      <rect x="372" y="750" width="256" height="38" rx="19" fill="#000000" />
-    </mask>
-  </defs>
-
   <!-- High-Precision Symmetrical Parthenium Hysterophorus Bipinnatifid Leaf Silhouette -->
   <path
     d="M 500,74
@@ -56,6 +40,20 @@
        C 481,128 490,95 500,74
        Z"
     fill="#00873E"
-    mask="url(#flaskCutout)"
   />
+
+  <!-- Precision Scientific Erlenmeyer Flask in solid bright white -->
+  <!-- Top Lip -->
+  <rect x="442" y="416" width="116" height="24" rx="7" fill="#FFFFFF" />
+  <!-- Neck -->
+  <rect x="456" y="428" width="88" height="118" rx="2" fill="#FFFFFF" />
+  <!-- Conical Body -->
+  <polygon points="456,544 544,544 628,768 372,768" fill="#FFFFFF" />
+  <!-- Rounded Base Corners and Flat Bottom -->
+  <rect x="370" y="750" width="260" height="40" rx="20" fill="#FFFFFF" />
+
+  <!-- Laboratory graduation ticks in botanical green -->
+  <line x1="480" y1="623" x2="540" y2="623" stroke="#00873E" stroke-width="6" stroke-linecap="round" />
+  <line x1="465" y1="668" x2="560" y2="668" stroke="#00873E" stroke-width="6" stroke-linecap="round" />
+  <line x1="445" y1="713" x2="580" y2="713" stroke="#00873E" stroke-width="6" stroke-linecap="round" />
 </svg>

@@ -1,4 +1,7 @@
 import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
+import { LanguageCode } from '../types';
+import { TRANSLATIONS, Translations } from '../data/translations';
 
 export interface DossierPdfData {
   acres: number;
@@ -11,9 +14,76 @@ export interface DossierPdfData {
   ureaBags: number;
   foliarSprayLiters: string;
   reportDate?: string;
+  language?: LanguageCode;
+  elementToCapture?: HTMLElement | null;
 }
 
-export function exportDossierPdf(data: DossierPdfData): boolean {
+/**
+ * Universal PDF export for NCSC Dossier.
+ * 
+ * Strategy:
+ * 1. If elementToCapture (or document.getElementById('ncsc-printable-dossier-content')) is present,
+ *    we use html2canvas + jsPDF to take an ultra-crisp snapshot of the rendered DOM.
+ *    This completely solves the Odia / Devanagari font glyph limitation in default jsPDF,
+ *    guaranteeing 100% accurate Indic script and font rendering.
+ * 2. If no DOM element is available, it gracefully renders using the translated string dictionary
+ *    directly with vector jsPDF.
+ */
+export async function exportDossierPdf(data: DossierPdfData): Promise<boolean> {
+  const currentLang: LanguageCode = data.language || 'EN';
+  const t: Translations = TRANSLATIONS[currentLang] || TRANSLATIONS.EN;
+
+  // Try high-fidelity canvas capture first (ideal for Odia & Hindi complex scripts)
+  const targetElement = data.elementToCapture || document.getElementById('ncsc-printable-dossier-content');
+  if (targetElement) {
+    try {
+      const canvas = await html2canvas(targetElement, {
+        scale: 2.2, // Retina scale for razor-sharp typography
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        windowWidth: 1024,
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const imgWidth = pageWidth - 16; // 8mm margin on left and right
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      if (imgHeight <= pageHeight - 16) {
+        doc.addImage(imgData, 'JPEG', 8, 8, imgWidth, imgHeight);
+      } else {
+        // Multi-page handling for large dossier prints
+        let heightLeft = imgHeight;
+        let position = 8;
+
+        doc.addImage(imgData, 'JPEG', 8, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight;
+          doc.addPage();
+          doc.addImage(imgData, 'JPEG', 8, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+      }
+
+      const filename = `NCSC_2026_Weeds_to_Wealth_Dossier_${currentLang}_${data.acres}Acres.pdf`;
+      doc.save(filename);
+      return true;
+    } catch (canvasErr) {
+      console.warn('html2canvas capture failed; falling back to direct vector jsPDF generator:', canvasErr);
+    }
+  }
+
+  // Fallback: Direct vector jsPDF engine localized using current dictionary
   try {
     const doc = new jsPDF({
       orientation: 'portrait',
@@ -27,7 +97,6 @@ export function exportDossierPdf(data: DossierPdfData): boolean {
     const contentWidth = pageWidth - margin * 2; // 182mm
     let y = 14;
 
-    // Helper functions
     const setFont = (style: 'normal' | 'bold' = 'normal', size = 10, color: [number, number, number] = [24, 24, 27]) => {
       doc.setFont('helvetica', style);
       doc.setFontSize(size);
@@ -41,20 +110,20 @@ export function exportDossierPdf(data: DossierPdfData): boolean {
 
     // Institution & Sub-theme title
     setFont('bold', 9, [6, 95, 70]);
-    doc.text("NATIONAL CHILDREN'S SCIENCE CONGRESS (NCSC 2026-27)", pageWidth / 2, y, { align: 'center' });
+    doc.text(t.pdfTitle, pageWidth / 2, y, { align: 'center' });
     y += 4.5;
 
     setFont('bold', 8, [82, 82, 91]);
-    doc.text("SUB-THEME 5: INDIGENOUS KNOWLEDGE SYSTEMS (IKS) FOR SUSTAINABLE DEVELOPMENT", pageWidth / 2, y, { align: 'center' });
+    doc.text(t.pdfSubtheme, pageWidth / 2, y, { align: 'center' });
     y += 6;
 
     // Main Dossier Title
-    setFont('bold', 15, [9, 9, 11]);
-    doc.text("WEEDS TO WEALTH: TECHNICAL RESEARCH & FORMULATION DOSSIER", pageWidth / 2, y, { align: 'center' });
+    setFont('bold', 13, [9, 9, 11]);
+    doc.text(t.pdfDossierHeader, pageWidth / 2, y, { align: 'center' });
     y += 5;
 
-    setFont('normal', 8, [113, 113, 122]);
-    doc.text("Decentralized Bio-Conversion of Invasive Parthenium into Allelopathy-Free Organic Kunapajala", pageWidth / 2, y, { align: 'center' });
+    setFont('normal', 7.5, [113, 113, 122]);
+    doc.text(t.pdfDossierDesc, pageWidth / 2, y, { align: 'center' });
     y += 5;
 
     // Horizontal Divider
@@ -72,17 +141,17 @@ export function exportDossierPdf(data: DossierPdfData): boolean {
     doc.rect(margin, y, contentWidth, 12, 'S');
 
     const metaItems = [
-      { label: 'PROJECT STATUS', val: 'NCSC Field Verified' },
-      { label: 'AGRO-ECOLOGICAL ZONE', val: 'Western Odisha (Kalahandi)' },
+      { label: 'PROJECT STATUS', val: t.pdfProjectStatus },
+      { label: 'AGRO-ECOLOGICAL ZONE', val: t.pdfZone },
       { label: 'REPORT DATE', val: data.reportDate || new Date().toLocaleDateString('en-GB') },
-      { label: 'IKS REFERENCE', val: "Surapala's Vrikshayurveda" }
+      { label: 'IKS REFERENCE', val: t.pdfIksRef },
     ];
 
     metaItems.forEach((item, idx) => {
       const colX = margin + idx * metaColWidth + 2.5;
-      setFont('bold', 6.5, [113, 113, 122]);
+      setFont('bold', 6, [113, 113, 122]);
       doc.text(item.label, colX, y + 4.2);
-      setFont('bold', 7.5, [24, 24, 27]);
+      setFont('bold', 7, [24, 24, 27]);
       doc.text(item.val, colX, y + 8.8);
       if (idx > 0) {
         doc.line(margin + idx * metaColWidth, y, margin + idx * metaColWidth, y + 12);
@@ -92,14 +161,14 @@ export function exportDossierPdf(data: DossierPdfData): boolean {
     y += 16;
 
     // Section 1: Stoichiometry Table
-    setFont('bold', 9.5, [24, 24, 27]);
+    setFont('bold', 9, [24, 24, 27]);
     doc.setFillColor(244, 244, 245);
     doc.rect(margin, y, contentWidth, 6, 'F');
     doc.setDrawColor(212, 212, 216);
     doc.rect(margin, y, contentWidth, 6, 'S');
-    doc.text("1. AGRONOMIC STOICHIOMETRY & BIO-CONVERSION INPUTS", margin + 3, y + 4.2);
+    doc.text(t.pdfSection1, margin + 3, y + 4.2);
     setFont('normal', 7.5, [113, 113, 122]);
-    doc.text(`Active Landholding: ${data.acres} Acres`, margin + contentWidth - 3, y + 4.2, { align: 'right' });
+    doc.text(`${t.landholdingLabel}: ${data.acres}`, margin + contentWidth - 3, y + 4.2, { align: 'right' });
     y += 6;
 
     // Table Header
@@ -107,33 +176,33 @@ export function exportDossierPdf(data: DossierPdfData): boolean {
     doc.rect(margin, y, contentWidth, 5.5, 'F');
     doc.rect(margin, y, contentWidth, 5.5, 'S');
     setFont('bold', 7.5, [39, 39, 42]);
-    doc.text("Input Substrate", margin + 3, y + 3.8);
-    doc.text("Biochemical / Ecological Role", margin + 50, y + 3.8);
-    doc.text("Computed Allocation", margin + contentWidth - 3, y + 3.8, { align: 'right' });
+    doc.text(t.pdfSubstrateCol, margin + 3, y + 3.8);
+    doc.text(t.pdfRoleCol, margin + 50, y + 3.8);
+    doc.text(t.pdfAllocCol, margin + contentWidth - 3, y + 3.8, { align: 'right' });
     y += 5.5;
 
     // Table Rows
     const tableRows = [
       {
         sub: 'Parthenium hysterophorus',
-        role: 'Pre-flowering foliage (Allelopathic biomass source)',
-        alloc: `${data.partheniumKg} kg`
+        role: t.partheniumHarvestQuota,
+        alloc: `${data.partheniumKg} kg`,
       },
       {
         sub: 'Bos indicus Fresh Urine',
-        role: 'Enteric rumen microflora & nitrogen buffer',
-        alloc: `${data.cowUrineLiters} Liters`
+        role: t.bosIndicusUrine,
+        alloc: `${data.cowUrineLiters} Liters`,
       },
       {
         sub: 'Unrefined Jaggery',
-        role: 'Carbohydrate inoculum fueling rapid acidogenesis',
-        alloc: `${data.jaggeryKg} kg`
+        role: t.unrefinedJaggery,
+        alloc: `${data.jaggeryKg} kg`,
       },
       {
-        sub: 'Finished 10% Foliar Spray',
+        sub: t.foliarSprayTitle,
         role: 'Diluted aqueous foliar application (3 cycles)',
-        alloc: `${data.foliarSprayLiters} Liters`
-      }
+        alloc: `${data.foliarSprayLiters} Liters`,
+      },
     ];
 
     tableRows.forEach((row, rIdx) => {
@@ -145,13 +214,13 @@ export function exportDossierPdf(data: DossierPdfData): boolean {
       doc.setDrawColor(228, 228, 231);
       doc.rect(margin, y, contentWidth, 5.5, 'S');
 
-      setFont('bold', 7.5, [24, 24, 27]);
+      setFont('bold', 7, [24, 24, 27]);
       doc.text(row.sub, margin + 3, y + 3.8);
 
-      setFont('normal', 7, [82, 82, 91]);
+      setFont('normal', 6.8, [82, 82, 91]);
       doc.text(row.role, margin + 50, y + 3.8);
 
-      setFont('bold', 7.5, [6, 95, 70]);
+      setFont('bold', 7, [6, 95, 70]);
       doc.text(row.alloc, margin + contentWidth - 3, y + 3.8, { align: 'right' });
 
       y += 5.5;
@@ -159,35 +228,35 @@ export function exportDossierPdf(data: DossierPdfData): boolean {
 
     y += 4;
 
-    // Section 2: Economics & Carbon Offsets (3 Cards)
-    setFont('bold', 9.5, [24, 24, 27]);
+    // Section 2: Economics & Carbon Offsets
+    setFont('bold', 9, [24, 24, 27]);
     doc.setFillColor(244, 244, 245);
     doc.rect(margin, y, contentWidth, 6, 'F');
     doc.setDrawColor(212, 212, 216);
     doc.rect(margin, y, contentWidth, 6, 'S');
-    doc.text("2. FINANCIAL RETURN ON INVESTMENT & CARBON OFFSETS", margin + 3, y + 4.2);
+    doc.text(t.pdfSection2, margin + 3, y + 4.2);
     y += 6;
 
     const cardWidth = (contentWidth - 4) / 3;
     const cards = [
       {
-        title: 'SEASONAL FARM SAVINGS',
+        title: t.seasonalSavingsTitle.toUpperCase(),
         val: `Rs. ${data.seasonalSavings.toLocaleString('en-IN')}`,
         sub: '100% NPK input displacement',
-        color: [180, 83, 9] as [number, number, number]
+        color: [180, 83, 9] as [number, number, number],
       },
       {
-        title: 'CARBON DIOXIDE SPARED',
+        title: t.co2PreventedTitle.toUpperCase(),
         val: `${data.co2Prevented} kg CO2`,
-        sub: 'Avoided Haber-Bosch synthesis emissions',
-        color: [6, 95, 70] as [number, number, number]
+        sub: 'Avoided chemical synthesis',
+        color: [6, 95, 70] as [number, number, number],
       },
       {
-        title: 'SYNTHETIC UREA ELIMINATED',
+        title: t.ureaBagsTitle.toUpperCase(),
         val: `${data.ureaBags} Bags (45kg)`,
-        sub: 'Displaced commercial chemical bags',
-        color: [24, 24, 27] as [number, number, number]
-      }
+        sub: 'Synthetic fertilizer displaced',
+        color: [24, 24, 27] as [number, number, number],
+      },
     ];
 
     cards.forEach((card, cIdx) => {
@@ -197,98 +266,95 @@ export function exportDossierPdf(data: DossierPdfData): boolean {
       doc.setDrawColor(212, 212, 216);
       doc.rect(cardX, y, cardWidth, 16, 'S');
 
-      setFont('bold', 6.5, [113, 113, 122]);
+      setFont('bold', 6.2, [113, 113, 122]);
       doc.text(card.title, cardX + 3, y + 4.5);
 
-      setFont('bold', 10.5, card.color);
+      setFont('bold', 9.5, card.color);
       doc.text(card.val, cardX + 3, y + 9.5);
 
-      setFont('normal', 6.5, [113, 113, 122]);
+      setFont('normal', 6, [113, 113, 122]);
       doc.text(card.sub, cardX + 3, y + 13.5);
     });
 
     y += 20;
 
     // Section 3: 20-Day Fermentation Milestones
-    setFont('bold', 9.5, [24, 24, 27]);
+    setFont('bold', 9, [24, 24, 27]);
     doc.setFillColor(244, 244, 245);
     doc.rect(margin, y, contentWidth, 6, 'F');
     doc.setDrawColor(212, 212, 216);
     doc.rect(margin, y, contentWidth, 6, 'S');
-    doc.text("3. 20-DAY CONTROLLED FERMENTATION QUALITY & SAFETY MILESTONES", margin + 3, y + 4.2);
+    doc.text(t.pdfSection3, margin + 3, y + 4.2);
     y += 6;
 
     const milestones = [
       {
-        phase: 'Days 1-7: Acidogenesis & Hydrolysis (pH 6.8 -> 4.5 Nadir)',
+        phase: `Days 1-7: ${t.acidogenesisStage} (pH 6.8 -> 4.5)`,
         badge: 'CRITICAL HYDROLYSIS',
-        badgeColor: [180, 83, 9] as [number, number, number],
-        desc: 'Daily 5-minute manual clockwise stirring. Lactic & acetic acid drop pH to 4.5, cleaving 99.8% of parthenin lactone allergens into safe bio-chelates.'
+        desc: 'Daily clockwise stirring. Rapid lactic and acetic acid accumulation drops pH to 4.5, cleaving parthenin allergens.',
       },
       {
-        phase: 'Days 8-14: Anaerobic Proteolysis (pH 4.5 -> 5.8)',
+        phase: `Days 8-14: ${t.proteolysisStage} (pH 4.5 -> 5.8)`,
         badge: 'MINERAL CHELATION',
-        badgeColor: [3, 105, 161] as [number, number, number],
-        desc: 'Bi-daily gentle agitation. Cellular breakdown releases chelated zinc, manganese, and plant-absorbable ammonium.'
+        desc: 'Bi-daily agitation. Enzymatic proteolysis releases vegetative amino acids and chelated micro-nutrients.',
       },
       {
-        phase: 'Days 15-20: Methanogenesis & Maturation (pH 5.8 -> 7.1)',
-        badge: 'READY FOR FOLIAR SPRAY',
-        badgeColor: [6, 95, 70] as [number, number, number],
-        desc: 'Strict airtight hermetic seal with water-trap bubbler. Zero manual stirring. Neutralization of all volatile fatty acids.'
-      }
+        phase: `Days 15-20: ${t.maturationStage} (pH 5.8 -> 7.1)`,
+        badge: 'READY FOR SPRAY',
+        desc: 'Hermetic anaerobic curing. Volatile organic acids neutralize into bio-available NPK liquid fertilizer.',
+      },
     ];
 
     milestones.forEach((m) => {
       doc.setFillColor(255, 255, 255);
-      doc.rect(margin, y, contentWidth, 12, 'F');
+      doc.rect(margin, y, contentWidth, 11, 'F');
       doc.setDrawColor(228, 228, 231);
-      doc.rect(margin, y, contentWidth, 12, 'S');
+      doc.rect(margin, y, contentWidth, 11, 'S');
 
-      setFont('bold', 7.5, [24, 24, 27]);
-      doc.text(m.phase, margin + 3, y + 4.5);
+      setFont('bold', 7, [24, 24, 27]);
+      doc.text(m.phase, margin + 3, y + 4.2);
 
-      // Badge
-      setFont('bold', 6.5, m.badgeColor);
-      doc.text(`[ ${m.badge} ]`, margin + contentWidth - 3, y + 4.5, { align: 'right' });
+      setFont('bold', 5.8, [6, 95, 70]);
+      doc.text(m.badge, margin + contentWidth - 3, y + 4.2, { align: 'right' });
 
-      setFont('normal', 6.8, [82, 82, 91]);
-      doc.text(m.desc, margin + 3, y + 8.8, { maxWidth: contentWidth - 6 });
+      setFont('normal', 6.2, [82, 82, 91]);
+      doc.text(m.desc, margin + 3, y + 8.2, { maxWidth: contentWidth - 6 });
 
-      y += 13;
+      y += 11.5;
     });
 
-    y += 2;
+    y += 3;
 
-    // Section 4: N-P-K-S Nutrient Parity Overview
-    setFont('bold', 9.5, [24, 24, 27]);
+    // Section 4: N-P-K-S Parity
+    setFont('bold', 9, [24, 24, 27]);
     doc.setFillColor(244, 244, 245);
     doc.rect(margin, y, contentWidth, 6, 'F');
     doc.setDrawColor(212, 212, 216);
     doc.rect(margin, y, contentWidth, 6, 'S');
-    doc.text("4. N-P-K-S STOICHIOMETRIC PARITY OVERVIEW (200L EQUIVALENT)", margin + 3, y + 4.2);
+    doc.text(t.pdfSection4, margin + 3, y + 4.2);
     y += 6;
 
-    // Table Column Headers for Section 4
-    doc.setFillColor(238, 242, 238);
-    doc.rect(margin, y, contentWidth, 5, 'F');
+    // Table Header
+    doc.setFillColor(228, 228, 231);
+    doc.rect(margin, y, contentWidth, 5.2, 'F');
     doc.setDrawColor(212, 212, 216);
-    doc.rect(margin, y, contentWidth, 5, 'S');
-    setFont('bold', 6.6, [39, 39, 42]);
-    doc.text("NUTRIENT TARGET", margin + 3, y + 3.5);
-    doc.text("KUNAPAJALA PARITY", margin + 38, y + 3.5);
-    doc.text("SYNTHETIC BENCHMARK", margin + 76, y + 3.5);
-    doc.text("AGRONOMIC BIO-MECHANISM / BENEFIT", margin + 115, y + 3.5);
-    y += 5;
+    doc.rect(margin, y, contentWidth, 5.2, 'S');
 
-    const npkRows = [
-      { elem: 'Nitrogen (Available N)', kunapa: '1.84% (3.68 kg N)', synth: 'Urea 46% (3.68 kg)', note: 'Humic peptide slow release vs 40% volatilization loss' },
-      { elem: 'Phosphorus (P2O5)', kunapa: '0.92% (1.84 kg P)', synth: 'DAP 46% (1.84 kg)', note: 'Citrate-soluble organic phosphate with microbial mobility' },
-      { elem: 'Potassium (K2O)', kunapa: '1.45% (2.90 kg K)', synth: 'MOP 60% (2.90 kg)', note: 'Parthenium leaf ash enriched, zero chloride salt toxicity' },
-      { elem: 'Organic Sulfur (SO4)', kunapa: '0.68% (1.36 kg S)', synth: 'SSP Single Super Phos.', note: 'Alliin-derived bio-fungicidal disease suppression' }
+    setFont('bold', 6.8, [39, 39, 42]);
+    doc.text(t.pdfNutrientCol, margin + 3, y + 3.6);
+    doc.text(t.pdfKunapaCol, margin + 38, y + 3.6);
+    doc.text(t.pdfSynthCol, margin + 76, y + 3.6);
+    doc.text(t.pdfMechCol, margin + 115, y + 3.6);
+    y += 5.2;
+
+    const nutrientRows = [
+      { elem: 'Nitrogen (N)', kunapa: '1.84% (3.68 kg)', synth: 'Urea 46% (3.68 kg)', note: 'Humic amino peptide slow release' },
+      { elem: 'Phosphorus (P)', kunapa: '0.92% (1.84 kg)', synth: 'DAP 46% (1.84 kg)', note: 'Citrate-soluble organic phosphate' },
+      { elem: 'Potassium (K)', kunapa: '1.45% (2.90 kg)', synth: 'MOP 60% (2.90 kg)', note: 'Parthenium leaf ash enriched, zero chloride' },
+      { elem: 'Sulfur (S)', kunapa: '0.68% (1.36 kg)', synth: 'SSP Single Super Phos.', note: 'Bio-fungicidal systemic defense' },
     ];
 
-    npkRows.forEach((nRow, nrIdx) => {
+    nutrientRows.forEach((nRow, nrIdx) => {
       const isAlt = nrIdx % 2 === 1;
       if (isAlt) {
         doc.setFillColor(250, 250, 250);
@@ -297,16 +363,16 @@ export function exportDossierPdf(data: DossierPdfData): boolean {
       doc.setDrawColor(228, 228, 231);
       doc.rect(margin, y, contentWidth, 5.2, 'S');
 
-      setFont('bold', 6.8, [24, 24, 27]);
+      setFont('bold', 6.5, [24, 24, 27]);
       doc.text(nRow.elem, margin + 3, y + 3.6);
 
-      setFont('bold', 6.8, [6, 95, 70]);
+      setFont('bold', 6.5, [6, 95, 70]);
       doc.text(nRow.kunapa, margin + 38, y + 3.6);
 
-      setFont('normal', 6.8, [100, 100, 110]);
+      setFont('normal', 6.5, [100, 100, 110]);
       doc.text(nRow.synth, margin + 76, y + 3.6);
 
-      setFont('normal', 6.1, [71, 85, 105]);
+      setFont('normal', 6, [71, 85, 105]);
       doc.text(nRow.note, margin + 115, y + 3.6, { maxWidth: contentWidth - 118 });
 
       y += 5.2;
@@ -314,8 +380,8 @@ export function exportDossierPdf(data: DossierPdfData): boolean {
 
     y += 3.5;
 
-    // Section 5: Biosecurity Verification Assurance Box (Expanded height & proper line budget)
-    const bioBoxHeight = 22;
+    // Section 5: Biosecurity Verification Assurance Box
+    const bioBoxHeight = 20;
     doc.setFillColor(248, 250, 252);
     doc.rect(margin, y, contentWidth, bioBoxHeight, 'F');
     doc.setDrawColor(6, 95, 70);
@@ -323,52 +389,47 @@ export function exportDossierPdf(data: DossierPdfData): boolean {
     doc.rect(margin, y, contentWidth, bioBoxHeight, 'S');
 
     setFont('bold', 7.5, [6, 95, 70]);
-    doc.text("5. BIOSECURITY TAXONOMIC VERIFICATION & REJECTION PROTOCOL", margin + 3, y + 4.5);
+    doc.text(t.pdfSection5, margin + 3, y + 4.5);
 
-    setFont('normal', 6.3, [39, 39, 42]);
-    const biosecurityText = "Every foliar substrate ingested into community Kunapajala digesters undergoes automated Gemini Vision taxonomic verification. Substrates displaying non-target morphology (animals, pets, humans, or non-Parthenium species) are immediately rejected with 0.0% confidence to safeguard digester purity.";
-    doc.text(biosecurityText, margin + 3, y + 8.5, { maxWidth: contentWidth - 6, lineHeightFactor: 1.25 });
+    setFont('normal', 6.2, [39, 39, 42]);
+    doc.text(t.pdfBiosecurityText, margin + 3, y + 8.5, { maxWidth: contentWidth - 6, lineHeightFactor: 1.25 });
 
-    // Inner subtle divider line to separate descriptive text from citation
     doc.setDrawColor(209, 231, 221);
     doc.setLineWidth(0.2);
-    doc.line(margin + 3, y + 16, margin + contentWidth - 3, y + 16);
+    doc.line(margin + 3, y + 15, margin + contentWidth - 3, y + 15);
 
-    setFont('bold', 5.8, [100, 116, 139]);
-    doc.text("Doc Ref: NCSC-W2W-2026-KLH-01  |  Peer Verification: Hussain et al. (2017)  |  ICAR-DWR Guidelines", margin + 3, y + 19.5);
-    y += bioBoxHeight + 5;
+    setFont('bold', 5.6, [100, 116, 139]);
+    doc.text(t.pdfDocRef, margin + 3, y + 18.5);
+    y += bioBoxHeight + 4;
 
-    // Signatures for NCSC Evaluators
+    // Signatures
     const sigY = y + 1;
     doc.setDrawColor(24, 24, 27);
     doc.setLineWidth(0.4);
 
-    // Left Signature
     doc.line(margin + 5, sigY + 8, margin + 70, sigY + 8);
     setFont('bold', 7.5, [24, 24, 27]);
-    doc.text("Student Investigator Signature", margin + 5, sigY + 12);
+    doc.text(t.pdfSignInvestigator, margin + 5, sigY + 12);
     setFont('normal', 6.5, [113, 113, 122]);
-    doc.text("KV Bhawanipatna Agritech Innovation Unit", margin + 5, sigY + 15.5);
+    doc.text('KV Bhawanipatna Agritech Unit', margin + 5, sigY + 15.5);
 
-    // Right Signature
     const rightSigX = margin + contentWidth - 70;
     doc.line(rightSigX, sigY + 8, margin + contentWidth - 5, sigY + 8);
     setFont('bold', 7.5, [24, 24, 27]);
-    doc.text("NCSC Evaluator / Guide Teacher", rightSigX, sigY + 12);
+    doc.text(t.pdfSignEvaluator, rightSigX, sigY + 12);
     setFont('normal', 6.5, [113, 113, 122]);
-    doc.text("Sub-Theme 5 (IKS) Regional Jury Panel", rightSigX, sigY + 15.5);
+    doc.text('Sub-Theme 5 (IKS) Jury Panel', rightSigX, sigY + 15.5);
 
-    // Footer timestamp & page number
+    // Footer
     setFont('normal', 6, [161, 161, 170]);
-    doc.text("Generated by Weeds to Wealth | Mission LiFE Open-Science Platform", margin, pageHeight - 6);
-    doc.text("Page 1 of 1", margin + contentWidth, pageHeight - 6, { align: 'right' });
+    doc.text('Generated by Weeds to Wealth | Mission LiFE Open-Science Platform', margin, pageHeight - 6);
+    doc.text('Page 1 of 1', margin + contentWidth, pageHeight - 6, { align: 'right' });
 
-    // Trigger instant native browser download
-    const filename = `NCSC_2026_Weeds_to_Wealth_Dossier_${data.acres}Acres.pdf`;
+    const filename = `NCSC_2026_Weeds_to_Wealth_Dossier_${currentLang}_${data.acres}Acres.pdf`;
     doc.save(filename);
     return true;
   } catch (err) {
-    console.error("Failed to generate PDF:", err);
+    console.error('Failed to generate PDF:', err);
     return false;
   }
 }

@@ -14,6 +14,7 @@ import {
   CheckCircle2,
   BookOpen
 } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface Particle {
   x: number;
@@ -49,6 +50,7 @@ const SUPPLY_NODES: SupplyNode[] = [
 ];
 
 export const InteractiveMechanismCanvas: React.FC = () => {
+  const { t } = useLanguage();
   const [activeView, setActiveView] = useState<'chelation' | 'synergy'>('chelation');
   const [fermentationDay, setFermentationDay] = useState<number>(12); // Day 1 to 20
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
@@ -304,13 +306,13 @@ export const InteractiveMechanismCanvas: React.FC = () => {
         <div>
           <div className="inline-flex items-center gap-2 border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-xs font-mono text-emerald-800 font-semibold mb-2">
             <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
-            <span>DIGITAL LAB // BIOTECH KINETICS SIMULATOR</span>
+            <span>{t.simulatorBadge}</span>
           </div>
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-zinc-950 uppercase font-mono">
-            Interactive Molecular & Process Mechanism Simulator (Digital Canvas)
+            {t.simulatorTitle}
           </h2>
           <p className="text-zinc-600 text-xs sm:text-sm mt-1 font-mono max-w-3xl">
-            Observe simulated microscopic chelation kinetics and macroscopic agritech logistics in real-time.
+            {t.simulatorSubtitle}
           </p>
         </div>
 
@@ -325,7 +327,7 @@ export const InteractiveMechanismCanvas: React.FC = () => {
             }`}
           >
             <Atom className="w-4 h-4 text-emerald-400" />
-            <span>[1. Parthenin Chelation & Amino Acid Binding]</span>
+            <span>[ {t.tabChelation} ]</span>
           </button>
 
           <button
@@ -337,7 +339,7 @@ export const InteractiveMechanismCanvas: React.FC = () => {
             }`}
           >
             <Network className="w-4 h-4 text-emerald-400" />
-            <span>[2. Bio-Hybrid Synergy Loop]</span>
+            <span>[ {t.tabSynergy} ]</span>
           </button>
         </div>
       </div>
@@ -433,17 +435,17 @@ export const InteractiveMechanismCanvas: React.FC = () => {
                 <div className="flex items-center justify-between border-b border-zinc-200 pb-2 mb-3">
                   <span className="text-emerald-800 font-black flex items-center gap-1.5 text-[11px]">
                     <Activity className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>KINETIC STATUS BREAKDOWN</span>
+                    <span>{t.kineticBreakdownTitle}</span>
                   </span>
                   <span className="text-[9px] bg-emerald-50 text-emerald-800 border border-emerald-300 px-1.5 py-0.5 font-bold">
-                    DAY {fermentationDay}/20
+                    {t.dayLabel} {fermentationDay}/20
                   </span>
                 </div>
 
                 <div className="space-y-3">
                   <div>
                     <div className="flex justify-between text-[11px] mb-1">
-                      <span className="text-zinc-600 font-medium">Free Parthenin Sesquiterpene:</span>
+                      <span className="text-zinc-600 font-medium">{t.freePartheninLabel}</span>
                       <span className="text-amber-700 font-bold">{freeToxinPct}%</span>
                     </div>
                     <div className="w-full bg-zinc-200 h-2 overflow-hidden">
@@ -453,7 +455,7 @@ export const InteractiveMechanismCanvas: React.FC = () => {
 
                   <div>
                     <div className="flex justify-between text-[11px] mb-1">
-                      <span className="text-zinc-600 font-medium">Lactone Ring Cleavage:</span>
+                      <span className="text-zinc-600 font-medium">{t.lactoneCleavageLabel}</span>
                       <span className="text-sky-700 font-bold">{lactoneRingDegradationPct}%</span>
                     </div>
                     <div className="w-full bg-zinc-200 h-2 overflow-hidden">
@@ -463,7 +465,7 @@ export const InteractiveMechanismCanvas: React.FC = () => {
 
                   <div>
                     <div className="flex justify-between text-[11px] mb-1">
-                      <span className="text-zinc-600 font-medium">Stable Amino-Chelate Bonds:</span>
+                      <span className="text-zinc-600 font-medium">{t.aminoChelateLabel}</span>
                       <span className="text-emerald-700 font-bold">{chelationBondRate}%</span>
                     </div>
                     <div className="w-full bg-zinc-200 h-2 overflow-hidden">
@@ -474,8 +476,7 @@ export const InteractiveMechanismCanvas: React.FC = () => {
 
                 <div className="mt-4 pt-3 border-t border-zinc-200 text-[11px] text-zinc-600 space-y-1.5">
                   <p className="flex justify-between">
-                    <span>Substrate Matrix:</span>
-                    <span className="text-zinc-900 font-semibold">Mustard + Sesame Oilcake</span>
+                    <span>{t.substrateMatrixLabel}</span>
                   </p>
                   <p className="flex justify-between">
                     <span>Residual Toxicity Index:</span>
@@ -490,10 +491,10 @@ export const InteractiveMechanismCanvas: React.FC = () => {
               <div className="bg-emerald-50/50 border border-emerald-300 p-4 font-mono text-xs shadow-xs">
                 <div className="flex items-center gap-1.5 text-emerald-900 font-bold mb-1.5 text-[11px] uppercase">
                   <BookOpen className="w-3.5 h-3.5 text-emerald-700" />
-                  <span>Surapala's Vrikshayurveda Substitution</span>
+                  <span>{t.surapalaTreatiseTitle}</span>
                 </div>
                 <p className="text-zinc-700 text-[11px] leading-relaxed">
-                  Instead of slaughterhouse animal marrow, toxic <strong className="text-zinc-950 font-bold">Parthenium</strong> sesquiterpene lactones are enzymatically cleaved by fermentative organic acids. Vegetative amino acids (cysteine, proline, glycine) chelate trace minerals into bio-available NPK macro-nutrients.
+                  {t.surapalaTreatiseText}
                 </p>
               </div>
             </div>

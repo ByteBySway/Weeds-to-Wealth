@@ -314,6 +314,10 @@ app.post("/api/scan-leaf", async (req, res) => {
 
 // Vite middleware setup
 async function startServer() {
+  // Always serve static files from public directory directly (favicons, icons, manifest, svg)
+  const publicPath = path.join(process.cwd(), "public");
+  app.use(express.static(publicPath));
+
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: {

@@ -30,27 +30,6 @@ export const PartheniumLogo: React.FC<PartheniumLogoProps> = ({
       fill="none"
       aria-label="Weeds to Wealth NCSC Winning Logo"
     >
-      <defs>
-        {/* Precision mask creating the Erlenmeyer flask negative space cutout inside the leaf */}
-        <mask id="ncscFlaskCutoutMask">
-          {/* White canvas keeps all of the green leaf */}
-          <rect width="1000" height="1000" fill="#ffffff" />
-          
-          {/* Solid black cuts out the exact Erlenmeyer flask silhouette */}
-          {/* 1. Flask Top Lip */}
-          <rect x="442" y="416" width="116" height="24" rx="7" fill="#000000" />
-          
-          {/* 2. Flask Neck */}
-          <rect x="456" y="428" width="88" height="118" rx="2" fill="#000000" />
-          
-          {/* 3. Flask Conical Body */}
-          <polygon points="456,544 544,544 628,768 372,768" fill="#000000" />
-          
-          {/* 4. Flask Rounded Base Corners and Flat Bottom */}
-          <rect x="370" y="750" width="260" height="40" rx="20" fill="#000000" />
-        </mask>
-      </defs>
-
       {/* Symmetrical Parthenium Hysterophorus Bipinnatifid Leaf Silhouette */}
       <path
         d="M 500,74
@@ -92,8 +71,25 @@ export const PartheniumLogo: React.FC<PartheniumLogoProps> = ({
            C 481,128 490,95 500,74
            Z"
         fill={color}
-        mask="url(#ncscFlaskCutoutMask)"
       />
+
+      {/* Precision Scientific Erlenmeyer Flask in solid pure white */}
+      {/* 1. Flask Top Lip */}
+      <rect x="442" y="416" width="116" height="24" rx="7" fill={flaskColor} />
+      
+      {/* 2. Flask Neck */}
+      <rect x="456" y="428" width="88" height="118" rx="2" fill={flaskColor} />
+      
+      {/* 3. Flask Conical Body */}
+      <polygon points="456,544 544,544 628,768 372,768" fill={flaskColor} />
+      
+      {/* 4. Flask Rounded Base Corners and Flat Bottom */}
+      <rect x="370" y="750" width="260" height="40" rx="20" fill={flaskColor} />
+
+      {/* 5. Laboratory Graduation Ticks */}
+      <line x1="480" y1="623" x2="540" y2="623" stroke={color} strokeWidth="6" strokeLinecap="round" />
+      <line x1="465" y1="668" x2="560" y2="668" stroke={color} strokeWidth="6" strokeLinecap="round" />
+      <line x1="445" y1="713" x2="580" y2="713" stroke={color} strokeWidth="6" strokeLinecap="round" />
     </svg>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Sprout, TrendingUp, Sparkles, Layers, Clock, ShieldCheck, Check } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface CropProfile {
   id: 'paddy' | 'maize' | 'cotton' | 'legumes';
@@ -106,6 +107,7 @@ interface CropYieldPredictorProps {
 }
 
 export const CropYieldPredictor: React.FC<CropYieldPredictorProps> = ({ currentAcres = 2.5 }) => {
+  const { t } = useLanguage();
   const [selectedCropKey, setSelectedCropKey] = useState<'paddy' | 'maize' | 'cotton' | 'legumes'>('paddy');
   const crop = CROP_PROFILES[selectedCropKey];
 
@@ -121,22 +123,22 @@ export const CropYieldPredictor: React.FC<CropYieldPredictorProps> = ({ currentA
         <div>
           <div className="inline-flex items-center gap-2 border border-emerald-800/40 bg-emerald-50 px-3 py-1 text-xs text-emerald-800 mb-2 font-semibold shadow-[1px_1px_0px_0px_rgba(4,120,87,0.3)]">
             <span className="w-2 h-2 bg-emerald-700"></span>
-            AGRONOMIC YIELD & CARBON SEQUESTRATION MODEL
+            {t.cropPredictorBadge}
           </div>
           <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 flex items-center gap-2.5 font-sans">
             <TrendingUp className="w-6 h-6 text-emerald-700" />
-            Crop-Specific Yield Uplift & SOC Predictor
+            {t.cropPredictorTitle}
           </h3>
           <p className="text-xs sm:text-sm text-zinc-600 mt-1 max-w-2xl leading-relaxed font-sans">
-            Multi-season agronomic field projections based on replicated trials with foliar Kunapajala liquid formulations.
+            {t.cropPredictorSubtitle}
           </p>
         </div>
 
         {/* Selected Crop Badge */}
         <div className="bg-zinc-100 border border-zinc-300 px-3.5 py-2 text-xs">
-          <span className="text-zinc-500 block text-[10px] uppercase">Calculated Landholding</span>
+          <span className="text-zinc-500 block text-[10px] uppercase">{t.landholdingLabel}</span>
           <span className="text-zinc-900 font-bold text-sm">
-            {currentAcres} Acres ({hectares.toFixed(2)} Ha)
+            {currentAcres} {t.acresUnit} ({hectares.toFixed(2)} Ha)
           </span>
         </div>
       </div>

@@ -39,12 +39,12 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Title - Reduced size for compact brutalist hierarchy */}
           <span className="font-mono text-sm sm:text-base font-black tracking-tight text-zinc-950 uppercase">
-            WEEDS TO WEALTH
+            {t.appName}
           </span>
 
           {/* NCSC 2026-27 Badge */}
           <div className="border border-zinc-300 bg-zinc-50 px-1.5 py-0.5 font-mono text-zinc-600 text-[10px] sm:text-xs font-medium">
-            NCSC 2026-27
+            {t.ncscBadge}
           </div>
         </div>
 
@@ -96,7 +96,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               title="Surapala Vrikshayurveda vs. Hussain et al. (2017) Peer-Reviewed Matrix"
             >
               <span className="text-xs">📜</span>
-              <span>IKS & Citations Matrix</span>
+              <span>{t.citationsMatrixBtn}</span>
             </button>
           )}
 
@@ -107,7 +107,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             title="Export NCSC Research & Formulation Evaluation Dossier"
           >
             <Printer className="w-3 h-3 text-emerald-400" />
-            <span className="hidden md:inline">Export PDF</span>
+            <span className="hidden md:inline">{t.exportPdfBtn}</span>
             <span className="md:hidden">PDF</span>
           </button>
         </div>

@@ -107,10 +107,10 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
             <div className="mb-8">
               <div className="flex justify-between items-center mb-2">
                 <label className="text-sm font-mono text-zinc-200 font-semibold">
-                  Cultivation Land Size (Acres)
+                  {t.landholdingLabel} ({t.acresUnit})
                 </label>
                 <span className="font-mono text-emerald-400 text-lg sm:text-xl font-bold bg-zinc-950 px-3 py-1 border border-zinc-700">
-                  {acres.toFixed(1)} <span className="text-xs text-zinc-400 font-normal">Acres</span>
+                  {acres.toFixed(1)} <span className="text-xs text-zinc-400 font-normal">{t.acresUnit}</span>
                 </span>
               </div>
               <input
@@ -123,9 +123,9 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
                 className="w-full h-2.5 bg-zinc-800 rounded-none appearance-none cursor-pointer accent-emerald-500 focus:outline-none"
               />
               <div className="flex justify-between text-[11px] font-mono text-zinc-500 mt-1.5">
-                <span>1.0 Acre (Smallholder)</span>
-                <span>25.0 Acres</span>
-                <span>50.0 Acres (Commercial)</span>
+                <span>1.0 {t.acresUnit} (Smallholder)</span>
+                <span>25.0 {t.acresUnit}</span>
+                <span>50.0 {t.acresUnit} (Commercial)</span>
               </div>
             </div>
 
@@ -133,10 +133,10 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
             <div className="mb-8">
               <div className="flex justify-between items-center mb-2">
                 <label className="text-sm font-mono text-zinc-200 font-semibold">
-                  Current Synthetic NPK Spend (₹/Acre)
+                  {t.currentNpkSpendLabel} (₹/{t.acresUnit})
                 </label>
                 <span className="font-mono text-amber-400 text-lg sm:text-xl font-bold bg-zinc-950 px-3 py-1 border border-zinc-700">
-                  ₹{spend.toLocaleString('en-IN')} <span className="text-xs text-zinc-400 font-normal">/ Acre</span>
+                  ₹{spend.toLocaleString('en-IN')} <span className="text-xs text-zinc-400 font-normal">/ {t.acresUnit}</span>
                 </span>
               </div>
               <input
@@ -183,7 +183,7 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
               <div className="p-3.5 bg-zinc-950 border border-zinc-800 flex justify-between items-center shadow-inner">
                 <div>
                   <span className="text-xs text-zinc-400 uppercase tracking-wide block">
-                    Required Parthenium Biomass:
+                    {t.partheniumHarvestQuota}:
                   </span>
                   <span className="text-[11px] text-zinc-500">Harvest before flowering</span>
                 </div>
@@ -195,7 +195,7 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
               <div className="p-3.5 bg-zinc-950 border border-zinc-800 flex justify-between items-center shadow-inner">
                 <div>
                   <span className="text-xs text-zinc-400 uppercase tracking-wide block">
-                    Required Cow Urine:
+                    {t.bosIndicusUrine}:
                   </span>
                   <span className="text-[11px] text-zinc-500">Indigenous Bos indicus</span>
                 </div>
@@ -207,7 +207,7 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
               <div className="p-3.5 bg-zinc-950 border border-zinc-800 flex justify-between items-center shadow-inner">
                 <div>
                   <span className="text-xs text-zinc-400 uppercase tracking-wide block">
-                    Required Jaggery:
+                    {t.unrefinedJaggery}:
                   </span>
                   <span className="text-[11px] text-zinc-500">Microbial carbohydrate inoculum</span>
                 </div>
@@ -219,7 +219,7 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
 
             {/* Agronomic Spray Yield */}
             <div className="mt-5 p-3 bg-zinc-800/40 border border-zinc-700/60 flex items-center justify-between text-xs font-mono">
-              <span className="text-zinc-400">Finished 10% Foliar Spray:</span>
+              <span className="text-zinc-400">{t.foliarSprayTitle}:</span>
               <span className="text-zinc-200 font-bold">{finishedFertilizerLiters.toFixed(0)} Liters (3 Applications)</span>
             </div>
           </div>
@@ -227,7 +227,7 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
           {/* Bottom Highlight: Projected Seasonal Savings */}
           <div className="mt-8 pt-6 border-t border-zinc-800">
             <span className="text-xs font-mono text-zinc-400 uppercase tracking-widest block font-semibold">
-              PROJECTED SEASONAL SAVINGS:
+              {t.projectedSavingsTitle}
             </span>
             <div className="font-mono text-amber-500 text-4xl sm:text-5xl font-black mt-2 tracking-tight">
               ₹ {seasonalSavings.toLocaleString('en-IN')}
@@ -242,7 +242,7 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
                   CARBON OFFSET COUNTER
                 </span>
                 <span className="text-emerald-400 font-bold text-sm block mt-1">
-                  CO2 Prevented: {(acres * 12.4).toFixed(1)} kg
+                  {t.co2SparedLabel}: {(acres * 12.4).toFixed(1)} kg
                 </span>
                 <span className="text-zinc-500 block text-[10px] mt-0.5">Displaced Haber-Bosch emissions</span>
               </div>
@@ -250,7 +250,7 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
               <div className="p-2.5 bg-zinc-950/90 border border-zinc-800 text-zinc-400">
                 <span className="text-zinc-500 block text-[10px] uppercase">Synthetic Offset</span>
                 <span className="text-zinc-200 font-bold text-sm block mt-1">
-                  {ureaBagsEliminated} Bags
+                  {ureaBagsEliminated} {t.bagsLabel}
                 </span>
                 <span className="text-zinc-500 block text-[10px] mt-0.5">Urea/DAP eradicated</span>
               </div>

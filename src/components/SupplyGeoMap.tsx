@@ -247,10 +247,10 @@ export const SupplyGeoMap: React.FC = () => {
               <span>GEO_INTELLIGENCE // NCSC REGIONAL ERADICATION GRID</span>
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white uppercase font-mono">
-              PARTHENIUM GEO MAP & BIO-CONVERSION LOGISTICS
+              {t.supplyMapTitle}
             </h2>
             <p className="text-zinc-400 text-xs sm:text-sm mt-1 font-mono max-w-3xl">
-              Spatial tracking of invasive <em className="text-emerald-300 not-italic font-bold">P. hysterophorus</em> colonies across agricultural corridors. Real-time routing to decentralized hermetic Kunapajala bio-reactors.
+              {t.supplyMapSubtitle}
             </p>
           </div>
 

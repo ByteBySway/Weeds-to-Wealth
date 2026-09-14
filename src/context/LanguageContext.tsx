@@ -41,3 +41,6 @@ export const useLanguage = (): LanguageContextType => {
   }
   return context;
 };
+
+// Hook alias to support both useLanguage() and useTranslation() conventions
+export const useTranslation = useLanguage;
