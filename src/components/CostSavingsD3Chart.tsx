@@ -33,7 +33,7 @@ export const CostSavingsD3Chart: React.FC<CostSavingsD3ChartProps> = ({
   const [inflationRate, setInflationRate] = useState<number>(0.06); // 6% annual synthetic fertilizer inflation
   const [viewMode, setViewMode] = useState<'cumulative' | 'seasonal'>('cumulative');
   const [hoveredData, setHoveredData] = useState<SeasonData | null>(null);
-  const [chartDimensions, setChartDimensions] = useState({ width: 700, height: 340 });
+  const [chartDimensions, setChartDimensions] = useState({ width: 700, height: 350 });
 
   // Monitor container width dynamically via ResizeObserver
   useEffect(() => {
@@ -42,7 +42,7 @@ export const CostSavingsD3Chart: React.FC<CostSavingsD3ChartProps> = ({
       for (const entry of entries) {
         const { width } = entry.contentRect;
         const responsiveWidth = Math.max(300, width);
-        const responsiveHeight = window.innerWidth < 640 ? 280 : 340;
+        const responsiveHeight = window.innerWidth < 640 ? 310 : 350;
         setChartDimensions({ width: responsiveWidth, height: responsiveHeight });
       }
     });
@@ -134,9 +134,9 @@ export const CostSavingsD3Chart: React.FC<CostSavingsD3ChartProps> = ({
     const isMobile = width < 500;
     const margin = {
       top: 25,
-      right: isMobile ? 15 : 35,
-      bottom: isMobile ? 45 : 55,
-      left: isMobile ? 55 : 75,
+      right: isMobile ? 15 : 30,
+      bottom: 60,
+      left: isMobile ? 58 : 75,
     };
 
     const innerWidth = width - margin.left - margin.right;
@@ -194,7 +194,7 @@ export const CostSavingsD3Chart: React.FC<CostSavingsD3ChartProps> = ({
       .scalePoint<string>()
       .domain(data.map((d) => d.seasonLabel))
       .range([0, innerWidth])
-      .padding(0.2);
+      .padding(0.35);
 
     if (viewMode === 'cumulative') {
       // Y Scale for Cumulative mode
@@ -299,12 +299,20 @@ export const CostSavingsD3Chart: React.FC<CostSavingsD3ChartProps> = ({
         .attr('stroke', '#78350f')
         .attr('stroke-width', 1.5);
 
-      // Axes
-      const xAxis = d3.axisBottom(xScale).tickValues(
-        data
-          .filter((_, idx) => (isMobile ? idx % 2 === 0 || idx === data.length - 1 : true))
-          .map((d) => d.seasonLabel)
-      );
+      // Axes with intelligent tick decimation & slant angle to eliminate label collisions
+      const pointSpacing = innerWidth / Math.max(1, data.length);
+      let tickStep = 1;
+      if (pointSpacing < 36) {
+        tickStep = 3;
+      } else if (pointSpacing < 60) {
+        tickStep = 2;
+      }
+
+      const tickValues = data
+        .filter((_, idx) => idx % tickStep === 0 || idx === data.length - 1)
+        .map((d) => d.seasonLabel);
+
+      const xAxis = d3.axisBottom(xScale).tickValues(tickValues);
 
       const yAxis = d3
         .axisLeft(yScale)
@@ -321,8 +329,10 @@ export const CostSavingsD3Chart: React.FC<CostSavingsD3ChartProps> = ({
         .attr('fill', '#a1a1aa')
         .attr('font-size', isMobile ? '10px' : '11px')
         .attr('font-family', 'monospace')
-        .attr('transform', isMobile ? 'rotate(-30)' : 'none')
-        .attr('text-anchor', isMobile ? 'end' : 'middle');
+        .attr('transform', 'rotate(-35)')
+        .attr('text-anchor', 'end')
+        .attr('dx', '-6px')
+        .attr('dy', '4px');
 
       xAxisGroup.select('.domain').attr('stroke', '#3f3f46');
       xAxisGroup.selectAll('line').attr('stroke', '#3f3f46');
@@ -417,12 +427,20 @@ export const CostSavingsD3Chart: React.FC<CostSavingsD3ChartProps> = ({
         .attr('stroke', '#10b981')
         .attr('stroke-width', 1);
 
-      // Axes
-      const xAxis = d3.axisBottom(xScale).tickValues(
-        data
-          .filter((_, idx) => (isMobile ? idx % 2 === 0 || idx === data.length - 1 : true))
-          .map((d) => d.seasonLabel)
-      );
+      // Axes with intelligent tick decimation & slant angle to eliminate label collisions
+      const pointSpacingSeasonal = innerWidth / Math.max(1, data.length);
+      let tickStepSeasonal = 1;
+      if (pointSpacingSeasonal < 36) {
+        tickStepSeasonal = 3;
+      } else if (pointSpacingSeasonal < 60) {
+        tickStepSeasonal = 2;
+      }
+
+      const tickValuesSeasonal = data
+        .filter((_, idx) => idx % tickStepSeasonal === 0 || idx === data.length - 1)
+        .map((d) => d.seasonLabel);
+
+      const xAxis = d3.axisBottom(xScale).tickValues(tickValuesSeasonal);
 
       const yAxis = d3
         .axisLeft(yScale)
@@ -439,8 +457,10 @@ export const CostSavingsD3Chart: React.FC<CostSavingsD3ChartProps> = ({
         .attr('fill', '#a1a1aa')
         .attr('font-size', isMobile ? '10px' : '11px')
         .attr('font-family', 'monospace')
-        .attr('transform', isMobile ? 'rotate(-30)' : 'none')
-        .attr('text-anchor', isMobile ? 'end' : 'middle');
+        .attr('transform', 'rotate(-35)')
+        .attr('text-anchor', 'end')
+        .attr('dx', '-6px')
+        .attr('dy', '4px');
 
       xAxisGroup.select('.domain').attr('stroke', '#3f3f46');
       xAxisGroup.selectAll('line').attr('stroke', '#3f3f46');

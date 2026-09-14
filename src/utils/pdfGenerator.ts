@@ -269,76 +269,94 @@ export function exportDossierPdf(data: DossierPdfData): boolean {
     doc.text("4. N-P-K-S STOICHIOMETRIC PARITY OVERVIEW (200L EQUIVALENT)", margin + 3, y + 4.2);
     y += 6;
 
+    // Table Column Headers for Section 4
+    doc.setFillColor(238, 242, 238);
+    doc.rect(margin, y, contentWidth, 5, 'F');
+    doc.setDrawColor(212, 212, 216);
+    doc.rect(margin, y, contentWidth, 5, 'S');
+    setFont('bold', 6.6, [39, 39, 42]);
+    doc.text("NUTRIENT TARGET", margin + 3, y + 3.5);
+    doc.text("KUNAPAJALA PARITY", margin + 38, y + 3.5);
+    doc.text("SYNTHETIC BENCHMARK", margin + 76, y + 3.5);
+    doc.text("AGRONOMIC BIO-MECHANISM / BENEFIT", margin + 115, y + 3.5);
+    y += 5;
+
     const npkRows = [
-      { elem: 'Nitrogen (Available N)', kunapa: '1.84% (3.68 kg)', synth: 'Urea 46% (3.68 kg)', note: 'Humic peptide slow release vs 40% volatilization loss' },
-      { elem: 'Phosphorus (P2O5)', kunapa: '0.92% (1.84 kg)', synth: 'DAP 46% (1.84 kg)', note: 'Citrate-soluble organic phosphate with microbial mobility' },
-      { elem: 'Potassium (K2O)', kunapa: '1.45% (2.90 kg)', synth: 'MOP 60% (2.90 kg)', note: 'Parthenium leaf ash enriched, zero chloride salt toxicity' },
-      { elem: 'Organic Sulfur (SO4)', kunapa: '0.68% (1.36 kg)', synth: 'Single Super Phosphate', note: 'Alliin-derived bio-fungicidal disease suppression' }
+      { elem: 'Nitrogen (Available N)', kunapa: '1.84% (3.68 kg N)', synth: 'Urea 46% (3.68 kg)', note: 'Humic peptide slow release vs 40% volatilization loss' },
+      { elem: 'Phosphorus (P2O5)', kunapa: '0.92% (1.84 kg P)', synth: 'DAP 46% (1.84 kg)', note: 'Citrate-soluble organic phosphate with microbial mobility' },
+      { elem: 'Potassium (K2O)', kunapa: '1.45% (2.90 kg K)', synth: 'MOP 60% (2.90 kg)', note: 'Parthenium leaf ash enriched, zero chloride salt toxicity' },
+      { elem: 'Organic Sulfur (SO4)', kunapa: '0.68% (1.36 kg S)', synth: 'SSP Single Super Phos.', note: 'Alliin-derived bio-fungicidal disease suppression' }
     ];
 
     npkRows.forEach((nRow, nrIdx) => {
       const isAlt = nrIdx % 2 === 1;
       if (isAlt) {
         doc.setFillColor(250, 250, 250);
-        doc.rect(margin, y, contentWidth, 5, 'F');
+        doc.rect(margin, y, contentWidth, 5.2, 'F');
       }
       doc.setDrawColor(228, 228, 231);
-      doc.rect(margin, y, contentWidth, 5, 'S');
+      doc.rect(margin, y, contentWidth, 5.2, 'S');
 
-      setFont('bold', 7, [24, 24, 27]);
-      doc.text(nRow.elem, margin + 3, y + 3.5);
+      setFont('bold', 6.8, [24, 24, 27]);
+      doc.text(nRow.elem, margin + 3, y + 3.6);
 
-      setFont('bold', 7, [6, 95, 70]);
-      doc.text(`Kunapa: ${nRow.kunapa}`, margin + 55, y + 3.5);
+      setFont('bold', 6.8, [6, 95, 70]);
+      doc.text(nRow.kunapa, margin + 38, y + 3.6);
 
-      setFont('normal', 7, [113, 113, 122]);
-      doc.text(`Synth: ${nRow.synth}`, margin + 100, y + 3.5);
+      setFont('normal', 6.8, [100, 100, 110]);
+      doc.text(nRow.synth, margin + 76, y + 3.6);
 
-      setFont('normal', 6.2, [82, 82, 91]);
-      doc.text(nRow.note, margin + contentWidth - 3, y + 3.5, { align: 'right' });
+      setFont('normal', 6.1, [71, 85, 105]);
+      doc.text(nRow.note, margin + 115, y + 3.6, { maxWidth: contentWidth - 118 });
 
-      y += 5;
+      y += 5.2;
     });
 
-    y += 3;
+    y += 3.5;
 
-    // Section 5: Biosecurity Verification Assurance Box
-    doc.setFillColor(244, 244, 245);
-    doc.rect(margin, y, contentWidth, 14, 'F');
+    // Section 5: Biosecurity Verification Assurance Box (Expanded height & proper line budget)
+    const bioBoxHeight = 22;
+    doc.setFillColor(248, 250, 252);
+    doc.rect(margin, y, contentWidth, bioBoxHeight, 'F');
     doc.setDrawColor(6, 95, 70);
-    doc.setLineWidth(0.3);
-    doc.rect(margin, y, contentWidth, 14, 'S');
+    doc.setLineWidth(0.35);
+    doc.rect(margin, y, contentWidth, bioBoxHeight, 'S');
 
     setFont('bold', 7.5, [6, 95, 70]);
-    doc.text("BIOSECURITY TAXONOMIC VERIFICATION & REJECTION PROTOCOL", margin + 3, y + 4.5);
+    doc.text("5. BIOSECURITY TAXONOMIC VERIFICATION & REJECTION PROTOCOL", margin + 3, y + 4.5);
 
-    setFont('normal', 6.5, [39, 39, 42]);
+    setFont('normal', 6.3, [39, 39, 42]);
     const biosecurityText = "Every foliar substrate ingested into community Kunapajala digesters undergoes automated Gemini Vision taxonomic verification. Substrates displaying non-target morphology (animals, pets, humans, or non-Parthenium species) are immediately rejected with 0.0% confidence to safeguard digester purity.";
-    doc.text(biosecurityText, margin + 3, y + 8, { maxWidth: contentWidth - 6 });
+    doc.text(biosecurityText, margin + 3, y + 8.5, { maxWidth: contentWidth - 6, lineHeightFactor: 1.25 });
 
-    setFont('bold', 5.8, [113, 113, 122]);
-    doc.text("Doc Ref: NCSC-W2W-2026-KLH-01 | Peer Verification: Hussain et al. (2017) | ICAR-DWR", margin + 3, y + 12.2);
-    y += 17;
+    // Inner subtle divider line to separate descriptive text from citation
+    doc.setDrawColor(209, 231, 221);
+    doc.setLineWidth(0.2);
+    doc.line(margin + 3, y + 16, margin + contentWidth - 3, y + 16);
+
+    setFont('bold', 5.8, [100, 116, 139]);
+    doc.text("Doc Ref: NCSC-W2W-2026-KLH-01  |  Peer Verification: Hussain et al. (2017)  |  ICAR-DWR Guidelines", margin + 3, y + 19.5);
+    y += bioBoxHeight + 5;
 
     // Signatures for NCSC Evaluators
-    const sigY = y + 2;
+    const sigY = y + 1;
     doc.setDrawColor(24, 24, 27);
     doc.setLineWidth(0.4);
 
     // Left Signature
-    doc.line(margin + 5, sigY + 10, margin + 70, sigY + 10);
+    doc.line(margin + 5, sigY + 8, margin + 70, sigY + 8);
     setFont('bold', 7.5, [24, 24, 27]);
-    doc.text("Student Investigator Signature", margin + 5, sigY + 14);
+    doc.text("Student Investigator Signature", margin + 5, sigY + 12);
     setFont('normal', 6.5, [113, 113, 122]);
-    doc.text("KV Bhawanipatna Agritech Innovation Unit", margin + 5, sigY + 17.5);
+    doc.text("KV Bhawanipatna Agritech Innovation Unit", margin + 5, sigY + 15.5);
 
     // Right Signature
     const rightSigX = margin + contentWidth - 70;
-    doc.line(rightSigX, sigY + 10, margin + contentWidth - 5, sigY + 10);
+    doc.line(rightSigX, sigY + 8, margin + contentWidth - 5, sigY + 8);
     setFont('bold', 7.5, [24, 24, 27]);
-    doc.text("NCSC Evaluator / Guide Teacher", rightSigX, sigY + 14);
+    doc.text("NCSC Evaluator / Guide Teacher", rightSigX, sigY + 12);
     setFont('normal', 6.5, [113, 113, 122]);
-    doc.text("Sub-Theme 5 (IKS) Regional Jury Panel", rightSigX, sigY + 17.5);
+    doc.text("Sub-Theme 5 (IKS) Regional Jury Panel", rightSigX, sigY + 15.5);
 
     // Footer timestamp & page number
     setFont('normal', 6, [161, 161, 170]);

@@ -279,19 +279,65 @@ export const ReportPdfModal: React.FC<ReportPdfModalProps> = ({
             </div>
           </div>
 
-          {/* Section 4: Biosecurity Verification Assurance */}
+          {/* Section 4: N-P-K-S Stoichiometric Parity Overview */}
+          <div className="mb-6">
+            <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-zinc-900 bg-zinc-100 px-3 py-1.5 border border-zinc-300 mb-3">
+              4. N-P-K-S STOICHIOMETRIC PARITY OVERVIEW (200L EQUIVALENT)
+            </h2>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left font-mono text-xs border border-zinc-300">
+                <thead className="bg-zinc-100 text-zinc-700">
+                  <tr>
+                    <th className="border border-zinc-300 p-2 font-bold">Nutrient Target</th>
+                    <th className="border border-zinc-300 p-2 font-bold text-emerald-800">Kunapajala Parity</th>
+                    <th className="border border-zinc-300 p-2 font-bold text-zinc-600">Synthetic Benchmark</th>
+                    <th className="border border-zinc-300 p-2 font-bold">Agronomic Bio-Mechanism / Benefit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="border border-zinc-300 p-2 font-bold">Nitrogen (Available N)</td>
+                    <td className="border border-zinc-300 p-2 font-bold text-emerald-800">1.84% (3.68 kg N)</td>
+                    <td className="border border-zinc-300 p-2 text-zinc-600">Urea 46% (3.68 kg)</td>
+                    <td className="border border-zinc-300 p-2 text-zinc-600 text-[11px]">Humic peptide slow release vs 40% volatilization loss</td>
+                  </tr>
+                  <tr className="bg-zinc-50">
+                    <td className="border border-zinc-300 p-2 font-bold">Phosphorus (P2O5)</td>
+                    <td className="border border-zinc-300 p-2 font-bold text-emerald-800">0.92% (1.84 kg P)</td>
+                    <td className="border border-zinc-300 p-2 text-zinc-600">DAP 46% (1.84 kg)</td>
+                    <td className="border border-zinc-300 p-2 text-zinc-600 text-[11px]">Citrate-soluble organic phosphate with microbial mobility</td>
+                  </tr>
+                  <tr>
+                    <td className="border border-zinc-300 p-2 font-bold">Potassium (K2O)</td>
+                    <td className="border border-zinc-300 p-2 font-bold text-emerald-800">1.45% (2.90 kg K)</td>
+                    <td className="border border-zinc-300 p-2 text-zinc-600">MOP 60% (2.90 kg)</td>
+                    <td className="border border-zinc-300 p-2 text-zinc-600 text-[11px]">Parthenium leaf ash enriched, zero chloride salt toxicity</td>
+                  </tr>
+                  <tr className="bg-zinc-50">
+                    <td className="border border-zinc-300 p-2 font-bold">Organic Sulfur (SO4)</td>
+                    <td className="border border-zinc-300 p-2 font-bold text-emerald-800">0.68% (1.36 kg S)</td>
+                    <td className="border border-zinc-300 p-2 text-zinc-600">SSP Single Super Phos.</td>
+                    <td className="border border-zinc-300 p-2 text-zinc-600 text-[11px]">Alliin-derived bio-fungicidal disease suppression</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Section 5: Biosecurity Verification Assurance */}
           <div className="border border-zinc-300 bg-zinc-50 p-4 font-mono text-xs">
             <div className="flex items-center gap-2 mb-2 text-emerald-800 font-bold">
               <ShieldCheck className="w-4 h-4 text-emerald-700" />
-              <span>BIOSECURITY TAXONOMIC VERIFICATION & REJECTION PROTOCOL</span>
+              <span>5. BIOSECURITY TAXONOMIC VERIFICATION & REJECTION PROTOCOL</span>
             </div>
             <p className="text-zinc-700 text-[11px] leading-relaxed">
-              Every foliar substrate ingested into the community Kunapajala digesters undergoes automated Gemini Vision verification. Substrates displaying non-target morphology (animals, pets, humans, or non-Parthenium vegetation) are immediately rejected with 0.0% confidence to safeguard digester purity.
+              Every foliar substrate ingested into community Kunapajala digesters undergoes automated Gemini Vision taxonomic verification. Substrates displaying non-target morphology (animals, pets, humans, or non-Parthenium species) are immediately rejected with 0.0% confidence to safeguard digester purity.
             </p>
             <div className="mt-3 pt-2 border-t border-zinc-200 flex flex-wrap justify-between text-[10px] text-zinc-500">
               <span>National Children's Science Congress 2026-27</span>
               <span>Sub-Theme 5: Indigenous Knowledge Systems</span>
-              <span>Document Ref: NCSC-W2W-2026-KLH-01</span>
+              <span>Doc Ref: NCSC-W2W-2026-KLH-01 | Peer Verification: Hussain et al. (2017) | ICAR-DWR Guidelines</span>
             </div>
           </div>
 
