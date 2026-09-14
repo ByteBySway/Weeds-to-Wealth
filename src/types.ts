@@ -54,6 +54,34 @@ export interface InfestationPin {
   biomassTons: number;
   reportedDate: string;
   harvestVolunteerGroup: string;
+  clearedAreaSqMeters?: number;
+  aiVerified?: boolean;
+  soilMoistureIndex?: number;
+  monsoonVulnerability?: 'Extreme' | 'High' | 'Moderate';
+  nearestHubId?: string;
+}
+
+export interface CollectionHub {
+  id: string;
+  name: string;
+  lat: string;
+  lng: string;
+  capacityMT: number;
+  currentHarvestTonnageMT: number;
+  activeBioReactors: number;
+  dailyProductionLiters: number;
+  status: 'OPTIMAL' | 'NEAR_CAPACITY' | 'DISPATCHING';
+  assignedVillages: string[];
+}
+
+export interface EcologicalRecoveryZone {
+  id: string;
+  centerName: string;
+  clearedSqM: number;
+  restorationStatus: 'ACTIVE_EXTRACTION' | 'NEUTRALIZED' | 'BIO_ENRICHED';
+  soilPhRestored: number;
+  nativeFloraReboundPct: number;
+  radiusMeters: number;
 }
 
 export interface FermentationPhase {

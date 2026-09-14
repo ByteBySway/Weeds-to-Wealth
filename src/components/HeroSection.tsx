@@ -232,13 +232,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, onOpenRepo
           className="p-4 bg-white hover:bg-zinc-50 text-zinc-900 border border-zinc-300 text-left flex items-center justify-between shadow-[3px_3px_0px_0px_rgba(212,212,216,1)] active:translate-x-[1px] active:translate-y-[1px] cursor-pointer"
         >
           <div>
-            <span className="text-xs font-mono text-zinc-600 font-bold block mb-1">
-              [ 03 / GEOSPATIAL ]
+            <span className="text-xs font-mono text-emerald-700 font-bold block mb-1">
+              [ 03 / GEO INTELLIGENCE ]
             </span>
-            <span className="font-bold text-sm block">Parthenium Infestation Map</span>
-            <span className="text-xs text-zinc-500 font-mono">Telemetry & weed harvest clusters</span>
+            <span className="font-bold text-sm block">Parthenium Eradication Grid</span>
+            <span className="text-xs text-zinc-500 font-mono">Monsoon spread, village hubs & recovery rings</span>
           </div>
-          <ArrowRight className="w-5 h-5 text-zinc-700 shrink-0" />
+          <ArrowRight className="w-5 h-5 text-emerald-700 shrink-0" />
         </button>
       </div>
     </section>

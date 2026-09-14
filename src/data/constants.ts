@@ -75,7 +75,12 @@ export const INITIAL_SUPPLY_PINS: InfestationPin[] = [
     severity: "Critical",
     biomassTons: 18.5,
     reportedDate: "2026-09-08",
-    harvestVolunteerGroup: "KV Bhawanipatna Agri-Club"
+    harvestVolunteerGroup: "KV Bhawanipatna Agri-Club",
+    clearedAreaSqMeters: 4800,
+    aiVerified: true,
+    soilMoistureIndex: 78,
+    monsoonVulnerability: "Extreme",
+    nearestHubId: "HUB-BHAWANI-01"
   },
   {
     id: 2,
@@ -85,7 +90,12 @@ export const INITIAL_SUPPLY_PINS: InfestationPin[] = [
     severity: "Severe",
     biomassTons: 12.2,
     reportedDate: "2026-09-10",
-    harvestVolunteerGroup: "Kisan Morcha Sector 3"
+    harvestVolunteerGroup: "Kisan Morcha Sector 3",
+    clearedAreaSqMeters: 3100,
+    aiVerified: true,
+    soilMoistureIndex: 64,
+    monsoonVulnerability: "High",
+    nearestHubId: "HUB-JUNAGARH-02"
   },
   {
     id: 3,
@@ -95,7 +105,12 @@ export const INITIAL_SUPPLY_PINS: InfestationPin[] = [
     severity: "Moderate",
     biomassTons: 7.8,
     reportedDate: "2026-09-11",
-    harvestVolunteerGroup: "Rural LiFE Eco-Warriors"
+    harvestVolunteerGroup: "Rural LiFE Eco-Warriors",
+    clearedAreaSqMeters: 2200,
+    aiVerified: true,
+    soilMoistureIndex: 86,
+    monsoonVulnerability: "Extreme",
+    nearestHubId: "HUB-BHAWANI-01"
   },
   {
     id: 4,
@@ -105,7 +120,90 @@ export const INITIAL_SUPPLY_PINS: InfestationPin[] = [
     severity: "Critical",
     biomassTons: 22.0,
     reportedDate: "2026-09-12",
-    harvestVolunteerGroup: "Sub-Theme 5 IKS Field Unit"
+    harvestVolunteerGroup: "Sub-Theme 5 IKS Field Unit",
+    clearedAreaSqMeters: 5600,
+    aiVerified: true,
+    soilMoistureIndex: 58,
+    monsoonVulnerability: "High",
+    nearestHubId: "HUB-DHARAMGARH-03"
+  }
+];
+
+export const INITIAL_COLLECTION_HUBS: import('../types').CollectionHub[] = [
+  {
+    id: "HUB-BHAWANI-01",
+    name: "Bhawanipatna Central LiFE Reactor Hub",
+    lat: "19.9015° N",
+    lng: "83.1690° E",
+    capacityMT: 50.0,
+    currentHarvestTonnageMT: 26.3,
+    activeBioReactors: 6,
+    dailyProductionLiters: 110460,
+    status: "OPTIMAL",
+    assignedVillages: ["Kusumdarha", "Medinipur", "Duarsuni", "Bhawanipatna Urban"]
+  },
+  {
+    id: "HUB-JUNAGARH-02",
+    name: "Junagarh Basin Hermetic Digest Co-op",
+    lat: "19.8710° N",
+    lng: "83.2080° E",
+    capacityMT: 35.0,
+    currentHarvestTonnageMT: 19.8,
+    activeBioReactors: 4,
+    dailyProductionLiters: 83160,
+    status: "OPTIMAL",
+    assignedVillages: ["Junagarh Market Canal", "Kankeri", "Chichia"]
+  },
+  {
+    id: "HUB-DHARAMGARH-03",
+    name: "Dharamgarh Agrarian Sovereignty Reactor",
+    lat: "19.8150° N",
+    lng: "83.2450° E",
+    capacityMT: 40.0,
+    currentHarvestTonnageMT: 34.2,
+    activeBioReactors: 5,
+    dailyProductionLiters: 143640,
+    status: "NEAR_CAPACITY",
+    assignedVillages: ["Golamunda Border", "Charbahal", "Dharamgarh Agri-Zone"]
+  }
+];
+
+export const INITIAL_RECOVERY_ZONES: import('../types').EcologicalRecoveryZone[] = [
+  {
+    id: "REC-ZONE-01",
+    centerName: "Kalahandi Agro Corridor (Sector A)",
+    clearedSqM: 4800,
+    restorationStatus: "BIO_ENRICHED",
+    soilPhRestored: 6.8,
+    nativeFloraReboundPct: 74,
+    radiusMeters: 39
+  },
+  {
+    id: "REC-ZONE-02",
+    centerName: "Junagarh Canal Flank",
+    clearedSqM: 3100,
+    restorationStatus: "NEUTRALIZED",
+    soilPhRestored: 6.6,
+    nativeFloraReboundPct: 62,
+    radiusMeters: 31
+  },
+  {
+    id: "REC-ZONE-03",
+    centerName: "Sagada River Wetland Buffer",
+    clearedSqM: 2200,
+    restorationStatus: "ACTIVE_EXTRACTION",
+    soilPhRestored: 6.3,
+    nativeFloraReboundPct: 48,
+    radiusMeters: 26
+  },
+  {
+    id: "REC-ZONE-04",
+    centerName: "Dharamgarh Pasture Green Zone",
+    clearedSqM: 5600,
+    restorationStatus: "BIO_ENRICHED",
+    soilPhRestored: 7.1,
+    nativeFloraReboundPct: 82,
+    radiusMeters: 42
   }
 ];
 
