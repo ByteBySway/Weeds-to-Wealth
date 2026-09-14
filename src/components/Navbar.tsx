@@ -48,9 +48,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Right Section: Navigation Tabs on top, and slightly smaller tools directly lower */}
-        <div className="flex flex-col items-end gap-1.5 shrink-0 ml-auto">
-          {/* Upper Right: Primary Navigation Tabs */}
+        {/* Right Section: Navigation Tabs on top, with sub-row starting from under the dashboard on the left */}
+        <div className="flex flex-col items-start sm:items-end gap-1.5 shrink-0 ml-auto">
+          {/* Upper: Primary Navigation Tabs */}
           <nav className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar">
             {navItems.map((item) => {
               const isActive = activeTab === item.id;
@@ -70,8 +70,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             })}
           </nav>
 
-          {/* Lower Right (smaller sub-row directly lower to dashboard/scanner tabs): Language Switcher, IKS Citations, Export PDF */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Lower Sub-row: Shifted to the left starting directly under the tabs / dashboard */}
+          <div className="flex items-center gap-1.5 sm:gap-2 self-start">
             {/* Language Selector: [ 文A | EN | HI | OD ] */}
             <div className="flex items-center border border-zinc-300 bg-white p-0.5 shadow-2xs">
               <Languages className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-zinc-500 mx-1 shrink-0" />
