@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Terminal, Cpu, Info, Calculator, Sparkles, AlertCircle, Leaf } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { CropYieldPredictor } from './CropYieldPredictor';
+import { CostSavingsD3Chart } from './CostSavingsD3Chart';
 
 interface FormulationEngineProps {
   initialAcres?: number;
@@ -265,6 +266,11 @@ export const FormulationEngine: React.FC<FormulationEngineProps> = ({
           </div>
 
         </div>
+      </div>
+
+      {/* D3.JS COST SAVINGS OVER TIME VISUALIZER */}
+      <div className="max-w-5xl mx-auto">
+        <CostSavingsD3Chart acres={acres} spendPerAcre={spend} />
       </div>
 
       {/* MODULE 4: CROP-SPECIFIC YIELD UPLIFT & SOC PREDICTOR */}

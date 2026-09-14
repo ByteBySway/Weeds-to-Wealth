@@ -1,5 +1,5 @@
 {
-  "name": "Weeds to Wealth v1.0",
+  "name": "Weeds to Wealth",
   "description": "Replacing synthetic NPK with toxic invasive weeds. Scaling Vrikshayurveda's Kunapajala for Mission LiFE. NCSC 2026-27 | Sub-Theme 5.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

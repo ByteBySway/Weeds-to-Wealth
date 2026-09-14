@@ -58,7 +58,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenReport, onOpenIksMatrix })
       {/* Persistent Brutalist Telemetry Bar */}
       <div className="border-t border-zinc-300 bg-zinc-50 px-4 sm:px-6 py-3 flex flex-col sm:flex-row justify-between items-center text-xs font-mono text-zinc-600 gap-2">
         <div className="flex items-center gap-3">
-          <span className="text-zinc-900 font-bold">WEEDS TO WEALTH v1.0</span>
+          <span className="text-zinc-900 font-bold">WEEDS TO WEALTH</span>
           <span>|</span>
           <span>National Children's Science Congress (NCSC)</span>
         </div>

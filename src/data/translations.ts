@@ -40,7 +40,7 @@ export interface Translations {
 
 export const TRANSLATIONS: Record<LanguageCode, Translations> = {
   EN: {
-    appName: 'WEEDS TO WEALTH v1.0',
+    appName: 'WEEDS TO WEALTH',
     ncscBadge: 'NCSC 2026-27',
     tabDashboard: 'Dashboard',
     tabCalculator: 'Formulation Engine',
@@ -82,7 +82,7 @@ export const TRANSLATIONS: Record<LanguageCode, Translations> = {
     totalBiomass: 'Total Biomass',
   },
   HI: {
-    appName: 'खरपतवार से समृद्धि v1.0',
+    appName: 'खरपतवार से समृद्धि',
     ncscBadge: 'एनसीएससी 2026-27',
     tabDashboard: 'डैशबोर्ड',
     tabCalculator: 'फॉर्मूलेशन इंजन',
@@ -124,7 +124,7 @@ export const TRANSLATIONS: Record<LanguageCode, Translations> = {
     totalBiomass: 'कुल बायोमास',
   },
   OD: {
-    appName: 'ଅନାବନା ଘାସରୁ ଧନ v1.0',
+    appName: 'ଅନାବନା ଘାସରୁ ଧନ',
     ncscBadge: 'ଏନସିଏସସି ୨୦୨୬-୨୭',
     tabDashboard: 'ଡ୍ୟାସବୋର୍ଡ',
     tabCalculator: 'ଫର୍ମୁଲେସନ ଇଞ୍ଜିନ',

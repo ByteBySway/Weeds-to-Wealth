@@ -142,7 +142,7 @@ export const ReportPdfModal: React.FC<ReportPdfModalProps> = ({
               SUB-THEME 5: INDIGENOUS KNOWLEDGE SYSTEMS (IKS) FOR SUSTAINABLE DEVELOPMENT
             </span>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-950 mt-2 uppercase">
-              WEEDS TO WEALTH v1.0: TECHNICAL RESEARCH & FORMULATION DOSSIER
+              WEEDS TO WEALTH: TECHNICAL RESEARCH & FORMULATION DOSSIER
             </h1>
             <p className="text-xs font-mono text-zinc-500 mt-1">
               Decentralized Bio-Conversion of Invasive Parthenium hysterophorus into Allelopathy-Free Organic Kunapajala
